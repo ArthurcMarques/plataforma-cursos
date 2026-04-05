@@ -280,7 +280,7 @@ if (
         if (cursos.length === 0) {
             const linhaVazia = document.createElement("tr");
             const colunaVazia = document.createElement("td");
-            colunaVazia.colSpan = 4;
+            colunaVazia.colSpan = 5;
             colunaVazia.className = "text-center text-muted";
             colunaVazia.textContent = "Nenhum curso cadastrado.";
             linhaVazia.appendChild(colunaVazia);
@@ -303,10 +303,18 @@ if (
             const colunaNivel = document.createElement("td");
             colunaNivel.textContent = curso.nivel;
 
+            const colunaAcoes = document.createElement("td");
+            const linkModulos = document.createElement("a");
+            linkModulos.className = "btn btn-sm btn-outline-secondary";
+            linkModulos.href = `./modulos.html?idCurso=${curso.id}`;
+            linkModulos.textContent = "Gerenciar módulos";
+            colunaAcoes.appendChild(linkModulos);
+
             linha.appendChild(colunaTitulo);
             linha.appendChild(colunaCategoria);
             linha.appendChild(colunaInstrutor);
             linha.appendChild(colunaNivel);
+            linha.appendChild(colunaAcoes);
             tabelaCursosBody.appendChild(linha);
         });
     }
