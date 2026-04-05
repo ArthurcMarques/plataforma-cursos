@@ -2,7 +2,7 @@ import { cadastrarAula, listarAulas } from "./models/Aula.js";
 import { cadastrarAssinatura, listarAssinaturas } from "./models/Assinatura.js";
 import { atualizarCategoria, cadastrarCategoria, excluirCategoria, listarCategorias } from "./models/Categoria.js";
 import { cadastrarCertificado, listarCertificados } from "./models/Certificado.js";
-import { atualizarTotalAulasCurso, cadastrarCurso, listarCursos } from "./models/Curso.js";
+import { atualizarCurso, atualizarTotalAulasCurso, cadastrarCurso, excluirCurso, listarCursos } from "./models/Curso.js";
 import { cadastrarMatricula, listarMatriculas } from "./models/Matricula.js";
 import { cadastrarModulo, listarModulos } from "./models/Modulo.js";
 import { cadastrarPagamento, listarPagamentos } from "./models/Pagamento.js";
@@ -10,7 +10,7 @@ import { cadastrarPlano, listarPlanos } from "./models/Plano.js";
 import { cadastrarProgressoAula, listarProgressoAulas } from "./models/ProgressoAula.js";
 import { cadastrarTrilha, listarTrilhas } from "./models/Trilha.js";
 import { cadastrarTrilhaCurso, listarTrilhasCursos } from "./models/TrilhaCurso.js";
-import { cadastrarUsuario, listarUsuarios } from "./models/Usuario.js";
+import { atualizarUsuario, cadastrarUsuario, excluirUsuario, listarUsuarios } from "./models/Usuario.js";
 
 const formCategoria = document.getElementById("form-categoria");
 const nomeCategoriaInput = document.getElementById("nome-categoria");
@@ -73,9 +73,22 @@ if (
             const colunaAcoes = document.createElement("td");
             colunaAcoes.className = "text-center";
 
+            const dropdown = document.createElement("div");
+            dropdown.className = "dropup";
+
+            const botaoAcoes = document.createElement("button");
+            botaoAcoes.type = "button";
+            botaoAcoes.className = "btn btn-sm btn-outline-secondary dropdown-toggle";
+            botaoAcoes.setAttribute("data-bs-toggle", "dropdown");
+            botaoAcoes.textContent = "A\u00e7\u00f5es";
+
+            const menu = document.createElement("ul");
+            menu.className = "dropdown-menu";
+
+            const itemEditar = document.createElement("li");
             const botaoEditar = document.createElement("button");
             botaoEditar.type = "button";
-            botaoEditar.className = "btn btn-sm btn-outline-primary me-2";
+            botaoEditar.className = "dropdown-item";
             botaoEditar.textContent = "Editar";
             botaoEditar.addEventListener("click", () => {
                 idCategoriaEmEdicao = categoria.id;
@@ -88,9 +101,12 @@ if (
                 }
             });
 
+            itemEditar.appendChild(botaoEditar);
+
+            const itemExcluir = document.createElement("li");
             const botaoExcluir = document.createElement("button");
             botaoExcluir.type = "button";
-            botaoExcluir.className = "btn btn-sm btn-outline-danger";
+            botaoExcluir.className = "dropdown-item text-danger";
             botaoExcluir.textContent = "Excluir";
             botaoExcluir.addEventListener("click", () => {
                 const confirmar = window.confirm("Deseja excluir esta categoria?");
@@ -102,8 +118,12 @@ if (
                 renderizarCategorias();
             });
 
-            colunaAcoes.appendChild(botaoEditar);
-            colunaAcoes.appendChild(botaoExcluir);
+            itemExcluir.appendChild(botaoExcluir);
+            menu.appendChild(itemEditar);
+            menu.appendChild(itemExcluir);
+            dropdown.appendChild(botaoAcoes);
+            dropdown.appendChild(menu);
+            colunaAcoes.appendChild(dropdown);
 
             linha.appendChild(colunaNome);
             linha.appendChild(colunaDescricao);
@@ -168,6 +188,9 @@ if (
     dataCadastroUsuarioInput &&
     tabelaUsuariosBody
 ) {
+    let idUsuarioEmEdicao = null;
+    const botaoSalvarUsuario = formUsuario.querySelector("button[type='submit']");
+
     function emailValido(email) {
         return /^\S+@\S+\.\S+$/.test(email);
     }
@@ -184,6 +207,27 @@ if (
         dataCadastroUsuarioInput.value = dataAtualFormatoInput();
     }
 
+    function resetarFormularioUsuario() {
+        idUsuarioEmEdicao = null;
+        formUsuario.reset();
+        definirDataAtualPadrao();
+        if (botaoSalvarUsuario) {
+            botaoSalvarUsuario.textContent = "Cadastrar";
+        }
+    }
+
+    function prepararEdicaoUsuario(usuario) {
+        idUsuarioEmEdicao = usuario.id;
+        nomeUsuarioInput.value = usuario.nomeCompleto;
+        emailUsuarioInput.value = usuario.email;
+        senhaUsuarioInput.value = usuario.senha;
+        dataCadastroUsuarioInput.value = usuario.dataCadastro;
+        if (botaoSalvarUsuario) {
+            botaoSalvarUsuario.textContent = "Salvar alteracoes";
+        }
+        nomeUsuarioInput.focus();
+    }
+
     function renderizarUsuarios() {
         const usuarios = listarUsuarios();
         tabelaUsuariosBody.innerHTML = "";
@@ -191,7 +235,7 @@ if (
         if (usuarios.length === 0) {
             const linhaVazia = document.createElement("tr");
             const colunaVazia = document.createElement("td");
-            colunaVazia.colSpan = 4;
+            colunaVazia.colSpan = 5;
             colunaVazia.className = "text-center text-muted";
             colunaVazia.textContent = "Nenhum usuario cadastrado.";
             linhaVazia.appendChild(colunaVazia);
@@ -214,10 +258,61 @@ if (
             const colunaData = document.createElement("td");
             colunaData.textContent = usuario.dataCadastro;
 
+            const colunaAcoes = document.createElement("td");
+            colunaAcoes.className = "text-center";
+
+            const dropdown = document.createElement("div");
+            dropdown.className = "dropdown";
+
+            const botaoAcoes = document.createElement("button");
+            botaoAcoes.type = "button";
+            botaoAcoes.className = "btn btn-sm btn-outline-secondary dropdown-toggle";
+            botaoAcoes.setAttribute("data-bs-toggle", "dropdown");
+            botaoAcoes.textContent = "A\u00e7\u00f5es";
+
+            const menu = document.createElement("ul");
+            menu.className = "dropdown-menu";
+
+            const itemEditar = document.createElement("li");
+            const botaoEditar = document.createElement("button");
+            botaoEditar.type = "button";
+            botaoEditar.className = "dropdown-item";
+            botaoEditar.textContent = "Editar";
+            botaoEditar.addEventListener("click", () => {
+                prepararEdicaoUsuario(usuario);
+            });
+            itemEditar.appendChild(botaoEditar);
+
+            const itemExcluir = document.createElement("li");
+            const botaoExcluir = document.createElement("button");
+            botaoExcluir.type = "button";
+            botaoExcluir.className = "dropdown-item text-danger";
+            botaoExcluir.textContent = "Excluir";
+            botaoExcluir.addEventListener("click", () => {
+                const confirmar = window.confirm("Deseja excluir este usuario?");
+                if (!confirmar) {
+                    return;
+                }
+
+                excluirUsuario(usuario.id);
+                if (Number(idUsuarioEmEdicao) === Number(usuario.id)) {
+                    resetarFormularioUsuario();
+                }
+                renderizarUsuarios();
+            });
+            itemExcluir.appendChild(botaoExcluir);
+
+            menu.appendChild(itemEditar);
+            menu.appendChild(itemExcluir);
+            dropdown.appendChild(botaoAcoes);
+            dropdown.appendChild(menu);
+            colunaAcoes.appendChild(dropdown);
+
             linha.appendChild(colunaId);
             linha.appendChild(colunaNome);
             linha.appendChild(colunaEmail);
             linha.appendChild(colunaData);
+            linha.appendChild(colunaAcoes);
             tabelaUsuariosBody.appendChild(linha);
         });
     }
@@ -261,7 +356,7 @@ if (
         }
 
         const emailJaExiste = listarUsuarios().some((usuario) => {
-            return usuario.email === email;
+            return usuario.email === email && Number(usuario.id) !== Number(idUsuarioEmEdicao);
         });
 
         if (emailJaExiste) {
@@ -270,14 +365,18 @@ if (
             return;
         }
 
-        cadastrarUsuario(nomeCompleto, email, senha, dataCadastro);
+        if (idUsuarioEmEdicao === null) {
+            cadastrarUsuario(nomeCompleto, email, senha, dataCadastro);
+        } else {
+            atualizarUsuario(idUsuarioEmEdicao, nomeCompleto, email, senha, dataCadastro);
+        }
+
         renderizarUsuarios();
-        formUsuario.reset();
-        definirDataAtualPadrao();
+        resetarFormularioUsuario();
         nomeUsuarioInput.focus();
     });
 
-    definirDataAtualPadrao();
+    resetarFormularioUsuario();
     renderizarUsuarios();
 }
 
@@ -300,6 +399,9 @@ if (
     dataPublicacaoCursoInput &&
     tabelaCursosBody
 ) {
+    let idCursoEmEdicao = null;
+    const botaoSalvarCurso = formCurso.querySelector("button[type='submit']");
+
     function dataAtualFormatoInputCurso() {
         const hoje = new Date();
         const ano = hoje.getFullYear();
@@ -310,6 +412,29 @@ if (
 
     function definirDataPublicacaoPadrao() {
         dataPublicacaoCursoInput.value = dataAtualFormatoInputCurso();
+    }
+
+    function resetarFormularioCurso() {
+        idCursoEmEdicao = null;
+        formCurso.reset();
+        definirDataPublicacaoPadrao();
+        if (botaoSalvarCurso) {
+            botaoSalvarCurso.textContent = "Cadastrar";
+        }
+    }
+
+    function prepararEdicaoCurso(curso) {
+        idCursoEmEdicao = curso.id;
+        tituloCursoInput.value = curso.titulo;
+        descricaoCursoInput.value = curso.descricao;
+        nivelCursoSelect.value = curso.nivel;
+        categoriaCursoSelect.value = String(curso.idCategoria);
+        instrutorCursoSelect.value = String(curso.idInstrutor);
+        dataPublicacaoCursoInput.value = curso.dataPublicacao;
+        if (botaoSalvarCurso) {
+            botaoSalvarCurso.textContent = "Salvar alteracoes";
+        }
+        tituloCursoInput.focus();
     }
 
     function preencherSelectCategorias() {
@@ -415,11 +540,62 @@ if (
             colunaTotalAulas.textContent = totalAulasCalculado;
 
             const colunaAcoes = document.createElement("td");
+            colunaAcoes.className = "text-center";
+
+            const dropdown = document.createElement("div");
+            dropdown.className = "dropdown";
+
+            const botaoAcoes = document.createElement("button");
+            botaoAcoes.type = "button";
+            botaoAcoes.className = "btn btn-sm btn-outline-secondary dropdown-toggle";
+            botaoAcoes.setAttribute("data-bs-toggle", "dropdown");
+            botaoAcoes.textContent = "A\u00e7\u00f5es";
+
+            const menu = document.createElement("ul");
+            menu.className = "dropdown-menu";
+
+            const itemEditar = document.createElement("li");
+            const botaoEditar = document.createElement("button");
+            botaoEditar.type = "button";
+            botaoEditar.className = "dropdown-item";
+            botaoEditar.textContent = "Editar";
+            botaoEditar.addEventListener("click", () => {
+                prepararEdicaoCurso(curso);
+            });
+            itemEditar.appendChild(botaoEditar);
+
+            const itemExcluir = document.createElement("li");
+            const botaoExcluir = document.createElement("button");
+            botaoExcluir.type = "button";
+            botaoExcluir.className = "dropdown-item text-danger";
+            botaoExcluir.textContent = "Excluir";
+            botaoExcluir.addEventListener("click", () => {
+                const confirmar = window.confirm("Deseja excluir este curso?");
+                if (!confirmar) {
+                    return;
+                }
+
+                excluirCurso(curso.id);
+                if (Number(idCursoEmEdicao) === Number(curso.id)) {
+                    resetarFormularioCurso();
+                }
+                renderizarCursos();
+            });
+            itemExcluir.appendChild(botaoExcluir);
+
+            const itemGerenciar = document.createElement("li");
             const linkModulos = document.createElement("a");
-            linkModulos.className = "btn btn-sm btn-outline-secondary";
+            linkModulos.className = "dropdown-item";
             linkModulos.href = `./modulos.html?idCurso=${curso.id}`;
-            linkModulos.textContent = "Gerenciar módulos";
-            colunaAcoes.appendChild(linkModulos);
+            linkModulos.textContent = "Gerenciar m\u00f3dulos";
+            itemGerenciar.appendChild(linkModulos);
+
+            menu.appendChild(itemEditar);
+            menu.appendChild(itemExcluir);
+            menu.appendChild(itemGerenciar);
+            dropdown.appendChild(botaoAcoes);
+            dropdown.appendChild(menu);
+            colunaAcoes.appendChild(dropdown);
 
             linha.appendChild(colunaTitulo);
             linha.appendChild(colunaCategoria);
@@ -477,19 +653,22 @@ if (
             return;
         }
 
-        cadastrarCurso(titulo, descricao, nivel, idCategoria, idInstrutor, dataPublicacao);
+        if (idCursoEmEdicao === null) {
+            cadastrarCurso(titulo, descricao, nivel, idCategoria, idInstrutor, dataPublicacao);
+        } else {
+            atualizarCurso(idCursoEmEdicao, titulo, descricao, nivel, idCategoria, idInstrutor, dataPublicacao);
+        }
+
         renderizarCursos();
-        formCurso.reset();
-        definirDataPublicacaoPadrao();
+        resetarFormularioCurso();
         tituloCursoInput.focus();
     });
 
-    definirDataPublicacaoPadrao();
+    resetarFormularioCurso();
     preencherSelectCategorias();
     preencherSelectInstrutores();
     renderizarCursos();
 }
-
 const formModulo = document.getElementById("form-modulo");
 const tituloModuloInput = document.getElementById("titulo-modulo");
 const ordemModuloInput = document.getElementById("ordem-modulo");
@@ -801,7 +980,7 @@ if (formMatricula && usuarioMatriculaSelect && cursoMatriculaSelect && tabelaMat
 
         const opcaoPadrao = document.createElement("option");
         opcaoPadrao.value = "";
-        opcaoPadrao.textContent = "Selecione um usuário";
+        opcaoPadrao.textContent = "Selecione um usuÃ¡rio";
         usuarioMatriculaSelect.appendChild(opcaoPadrao);
 
         const usuarios = listarUsuarios();
@@ -849,7 +1028,7 @@ if (formMatricula && usuarioMatriculaSelect && cursoMatriculaSelect && tabelaMat
             const colunaVazia = document.createElement("td");
             colunaVazia.colSpan = 3;
             colunaVazia.className = "text-center text-muted";
-            colunaVazia.textContent = "Nenhuma matrícula cadastrada.";
+            colunaVazia.textContent = "Nenhuma matrÃ­cula cadastrada.";
             linhaVazia.appendChild(colunaVazia);
             tabelaMatriculasBody.appendChild(linhaVazia);
             return;
@@ -881,7 +1060,7 @@ if (formMatricula && usuarioMatriculaSelect && cursoMatriculaSelect && tabelaMat
         const idCurso = Number(cursoMatriculaSelect.value);
 
         if (!idUsuario) {
-            alert("Selecione o usuário.");
+            alert("Selecione o usuÃ¡rio.");
             usuarioMatriculaSelect.focus();
             return;
         }
@@ -897,7 +1076,7 @@ if (formMatricula && usuarioMatriculaSelect && cursoMatriculaSelect && tabelaMat
         });
 
         if (matriculaDuplicada) {
-            alert("Esse usuário já está matriculado nesse curso.");
+            alert("Esse usuÃ¡rio jÃ¡ estÃ¡ matriculado nesse curso.");
             usuarioMatriculaSelect.focus();
             return;
         }
@@ -2030,4 +2209,5 @@ if (formTrilhaCursos && nomeTrilhaSelecionada && cursoTrilhaSelect && ordemCurso
         renderizarCursosDaTrilha();
     }
 }
+
 

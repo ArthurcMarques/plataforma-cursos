@@ -29,7 +29,12 @@ const cursos = carregarListaDoStorage(CHAVE_STORAGE_CURSOS).map((item) => {
 });
 
 function gerarIdCurso() {
-    return cursos.length + 1;
+    if (cursos.length === 0) {
+        return 1;
+    }
+
+    const maiorId = Math.max(...cursos.map((curso) => Number(curso.id) || 0));
+    return maiorId + 1;
 }
 
 function cadastrarCurso(titulo, descricao, nivel, idCategoria, idInstrutor, dataPublicacao) {
@@ -63,4 +68,40 @@ function atualizarTotalAulasCurso(idCurso, totalAulas) {
     return curso;
 }
 
-export { Curso, cursos, gerarIdCurso, cadastrarCurso, listarCursos, atualizarTotalAulasCurso };
+function atualizarCurso(id, titulo, descricao, nivel, idCategoria, idInstrutor, dataPublicacao) {
+    const curso = cursos.find((item) => Number(item.id) === Number(id));
+    if (!curso) {
+        return null;
+    }
+
+    curso.titulo = titulo;
+    curso.descricao = descricao;
+    curso.nivel = nivel;
+    curso.idCategoria = idCategoria;
+    curso.idInstrutor = idInstrutor;
+    curso.dataPublicacao = dataPublicacao;
+    salvarListaNoStorage(CHAVE_STORAGE_CURSOS, cursos);
+    return curso;
+}
+
+function excluirCurso(id) {
+    const indice = cursos.findIndex((item) => Number(item.id) === Number(id));
+    if (indice === -1) {
+        return false;
+    }
+
+    cursos.splice(indice, 1);
+    salvarListaNoStorage(CHAVE_STORAGE_CURSOS, cursos);
+    return true;
+}
+
+export {
+    Curso,
+    cursos,
+    gerarIdCurso,
+    cadastrarCurso,
+    listarCursos,
+    atualizarTotalAulasCurso,
+    atualizarCurso,
+    excluirCurso
+};

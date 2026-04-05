@@ -3,19 +3,19 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="Página de cadastro e listagem de usuários">
-        <title>Usuários | Plataforma de Cursos</title>
+        <meta name="description" content="P&aacute;gina de cadastro e listagem de usu&aacute;rios">
+        <title>Usu&aacute;rios | Plataforma de Cursos</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     </head>
     <body class="bg-light">
         <main class="container py-5">
             <section class="mb-4">
-                <h1 class="mb-2">Usuários</h1>
-                <p class="text-muted mb-0">Cadastre e visualize os usuários da plataforma de cursos.</p>
+                <h1 class="mb-2">Usu&aacute;rios</h1>
+                <p class="text-muted mb-0">Cadastre e visualize os usu&aacute;rios da plataforma de cursos.</p>
             </section>
 
             <section class="bg-white border rounded-3 p-4 mb-4">
-                <h2 class="h5 mb-3">Novo Usuário</h2>
+                <h2 class="h5 mb-3">Novo Usu&aacute;rio</h2>
                 <form id="form-usuario">
                     <div class="mb-3">
                         <label for="nome-usuario" class="form-label">Nome completo</label>
@@ -42,26 +42,28 @@
             </section>
 
             <section class="bg-white border rounded-3 p-4">
-                <h2 class="h5 mb-3">Lista de Usuários</h2>
+                <h2 class="h5 mb-3">Lista de Usu&aacute;rios</h2>
                 <div class="table-responsive">
                     <table class="table table-striped table-bordered mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th>Matrícula</th>
+                                <th>Matr&iacute;cula</th>
                                 <th>Nome</th>
                                 <th>E-mail</th>
                                 <th>Data de cadastro</th>
+                                <th>A&ccedil;&otilde;es</th>
                             </tr>
                         </thead>
                         <tbody id="tabela-usuarios">
                             <tr>
-                                <td colspan="4" class="text-center text-muted">Nenhum usuário cadastrado.</td>
+                                <td colspan="5" class="text-center text-muted">Nenhum usu&aacute;rio cadastrado.</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             </section>
         </main>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
         <script type="module" src="../js/main.js"></script>
     </body>
 </html>

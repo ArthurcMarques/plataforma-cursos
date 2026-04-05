@@ -17,7 +17,12 @@ const usuarios = carregarListaDoStorage(CHAVE_STORAGE_USUARIOS).map((item) => {
 });
 
 function gerarIdUsuario() {
-    return usuarios.length + 1;
+    if (usuarios.length === 0) {
+        return 1;
+    }
+
+    const maiorId = Math.max(...usuarios.map((usuario) => Number(usuario.id) || 0));
+    return maiorId + 1;
 }
 
 function cadastrarUsuario(nomeCompleto, email, senha, dataCadastro) {
@@ -32,5 +37,38 @@ function listarUsuarios() {
     return usuarios;
 }
 
-export { Usuario, usuarios, gerarIdUsuario, cadastrarUsuario, listarUsuarios };
+function atualizarUsuario(id, nomeCompleto, email, senha, dataCadastro) {
+    const usuario = usuarios.find((item) => Number(item.id) === Number(id));
+    if (!usuario) {
+        return null;
+    }
+
+    usuario.nomeCompleto = nomeCompleto;
+    usuario.email = email.trim().toLowerCase();
+    usuario.senha = senha;
+    usuario.dataCadastro = dataCadastro;
+    salvarListaNoStorage(CHAVE_STORAGE_USUARIOS, usuarios);
+    return usuario;
+}
+
+function excluirUsuario(id) {
+    const indice = usuarios.findIndex((item) => Number(item.id) === Number(id));
+    if (indice === -1) {
+        return false;
+    }
+
+    usuarios.splice(indice, 1);
+    salvarListaNoStorage(CHAVE_STORAGE_USUARIOS, usuarios);
+    return true;
+}
+
+export {
+    Usuario,
+    usuarios,
+    gerarIdUsuario,
+    cadastrarUsuario,
+    listarUsuarios,
+    atualizarUsuario,
+    excluirUsuario
+};
 
