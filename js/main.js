@@ -1,4 +1,5 @@
 import { cadastrarAula, listarAulas } from "./models/Aula.js";
+import { cadastrarAssinatura, listarAssinaturas } from "./models/Assinatura.js";
 import { cadastrarCategoria, listarCategorias } from "./models/Categoria.js";
 import { cadastrarCertificado, listarCertificados } from "./models/Certificado.js";
 import { atualizarTotalAulasCurso, cadastrarCurso, listarCursos } from "./models/Curso.js";
@@ -1317,5 +1318,159 @@ if (
     });
 
     renderizarPlanos();
+}
+
+const formAssinatura = document.getElementById("form-assinatura");
+const usuarioAssinaturaSelect = document.getElementById("usuario-assinatura");
+const planoAssinaturaSelect = document.getElementById("plano-assinatura");
+const dataInicioAssinaturaInput = document.getElementById("data-inicio-assinatura");
+const dataFimAssinaturaInput = document.getElementById("data-fim-assinatura");
+const tabelaAssinaturasBody = document.getElementById("tabela-assinaturas");
+
+if (
+    formAssinatura &&
+    usuarioAssinaturaSelect &&
+    planoAssinaturaSelect &&
+    dataInicioAssinaturaInput &&
+    dataFimAssinaturaInput &&
+    tabelaAssinaturasBody
+) {
+    function preencherSelectUsuariosAssinatura() {
+        usuarioAssinaturaSelect.innerHTML = "";
+
+        const opcaoPadrao = document.createElement("option");
+        opcaoPadrao.value = "";
+        opcaoPadrao.textContent = "Selecione um usuario";
+        usuarioAssinaturaSelect.appendChild(opcaoPadrao);
+
+        const usuarios = listarUsuarios();
+        usuarios.forEach((usuario) => {
+            const opcao = document.createElement("option");
+            opcao.value = usuario.id;
+            opcao.textContent = usuario.nomeCompleto;
+            usuarioAssinaturaSelect.appendChild(opcao);
+        });
+    }
+
+    function preencherSelectPlanosAssinatura() {
+        planoAssinaturaSelect.innerHTML = "";
+
+        const opcaoPadrao = document.createElement("option");
+        opcaoPadrao.value = "";
+        opcaoPadrao.textContent = "Selecione um plano";
+        planoAssinaturaSelect.appendChild(opcaoPadrao);
+
+        const planos = listarPlanos();
+        planos.forEach((plano) => {
+            const opcao = document.createElement("option");
+            opcao.value = plano.id;
+            opcao.textContent = plano.nome;
+            planoAssinaturaSelect.appendChild(opcao);
+        });
+    }
+
+    function buscarNomeUsuarioAssinatura(idUsuario) {
+        const usuario = listarUsuarios().find((item) => Number(item.id) === Number(idUsuario));
+        return usuario ? usuario.nomeCompleto : "-";
+    }
+
+    function buscarNomePlanoAssinatura(idPlano) {
+        const plano = listarPlanos().find((item) => Number(item.id) === Number(idPlano));
+        return plano ? plano.nome : "-";
+    }
+
+    function renderizarAssinaturas() {
+        const assinaturas = listarAssinaturas();
+        tabelaAssinaturasBody.innerHTML = "";
+
+        if (assinaturas.length === 0) {
+            const linhaVazia = document.createElement("tr");
+            const colunaVazia = document.createElement("td");
+            colunaVazia.colSpan = 4;
+            colunaVazia.className = "text-center text-muted";
+            colunaVazia.textContent = "Nenhuma assinatura cadastrada.";
+            linhaVazia.appendChild(colunaVazia);
+            tabelaAssinaturasBody.appendChild(linhaVazia);
+            return;
+        }
+
+        assinaturas.forEach((assinatura) => {
+            const linha = document.createElement("tr");
+
+            const colunaUsuario = document.createElement("td");
+            colunaUsuario.textContent = buscarNomeUsuarioAssinatura(assinatura.idUsuario);
+
+            const colunaPlano = document.createElement("td");
+            colunaPlano.textContent = buscarNomePlanoAssinatura(assinatura.idPlano);
+
+            const colunaDataInicio = document.createElement("td");
+            colunaDataInicio.textContent = assinatura.dataInicio;
+
+            const colunaDataFim = document.createElement("td");
+            colunaDataFim.textContent = assinatura.dataFim;
+
+            linha.appendChild(colunaUsuario);
+            linha.appendChild(colunaPlano);
+            linha.appendChild(colunaDataInicio);
+            linha.appendChild(colunaDataFim);
+            tabelaAssinaturasBody.appendChild(linha);
+        });
+    }
+
+    formAssinatura.addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        const idUsuario = Number(usuarioAssinaturaSelect.value);
+        const idPlano = Number(planoAssinaturaSelect.value);
+        const dataInicio = dataInicioAssinaturaInput.value;
+        const dataFim = dataFimAssinaturaInput.value;
+
+        if (!idUsuario) {
+            alert("Selecione um usuario.");
+            usuarioAssinaturaSelect.focus();
+            return;
+        }
+
+        if (!idPlano) {
+            alert("Selecione um plano.");
+            planoAssinaturaSelect.focus();
+            return;
+        }
+
+        if (dataInicio === "") {
+            alert("Informe a data de inicio.");
+            dataInicioAssinaturaInput.focus();
+            return;
+        }
+
+        if (dataFim === "") {
+            alert("Informe a data de fim.");
+            dataFimAssinaturaInput.focus();
+            return;
+        }
+
+        const assinaturaDuplicada = listarAssinaturas().some((assinatura) => {
+            return (
+                Number(assinatura.idUsuario) === idUsuario &&
+                Number(assinatura.idPlano) === idPlano &&
+                assinatura.dataInicio === dataInicio &&
+                assinatura.dataFim === dataFim
+            );
+        });
+
+        if (assinaturaDuplicada) {
+            alert("Essa assinatura ja foi registrada.");
+            usuarioAssinaturaSelect.focus();
+            return;
+        }
+
+        cadastrarAssinatura(idUsuario, idPlano, dataInicio, dataFim);
+        renderizarAssinaturas();
+        formAssinatura.reset();
+    });
+
+    preencherSelectUsuariosAssinatura();
+    preencherSelectPlanosAssinatura();
+    renderizarAssinaturas();
 }
 
