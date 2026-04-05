@@ -45,10 +45,22 @@ function listarAvaliacoes() {
     return avaliacoes;
 }
 
+function excluirAvaliacao(id) {
+    const indice = avaliacoes.findIndex((item) => Number(item.id) === Number(id));
+    if (indice === -1) {
+        return false;
+    }
+
+    avaliacoes.splice(indice, 1);
+    salvarListaNoStorage(CHAVE_STORAGE_AVALIACOES, avaliacoes);
+    return true;
+}
+
 export {
     Avaliacao,
     avaliacoes,
     gerarIdAvaliacao,
     cadastrarAvaliacao,
-    listarAvaliacoes
+    listarAvaliacoes,
+    excluirAvaliacao
 };

@@ -25,4 +25,18 @@ function listarTrilhasCursos() {
     return trilhasCursos;
 }
 
-export { TrilhaCurso, trilhasCursos, cadastrarTrilhaCurso, listarTrilhasCursos };
+function excluirTrilhaCurso(idTrilha, idCurso) {
+    const indice = trilhasCursos.findIndex((item) => {
+        return Number(item.idTrilha) === Number(idTrilha) && Number(item.idCurso) === Number(idCurso);
+    });
+
+    if (indice === -1) {
+        return false;
+    }
+
+    trilhasCursos.splice(indice, 1);
+    salvarListaNoStorage(CHAVE_STORAGE_TRILHAS_CURSOS, trilhasCursos);
+    return true;
+}
+
+export { TrilhaCurso, trilhasCursos, cadastrarTrilhaCurso, listarTrilhasCursos, excluirTrilhaCurso };

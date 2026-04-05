@@ -1,8 +1,8 @@
 import { cadastrarAula, excluirAula, listarAulas } from "./models/Aula.js";
-import { cadastrarAvaliacao, listarAvaliacoes } from "./models/Avaliacao.js";
+import { cadastrarAvaliacao, excluirAvaliacao, listarAvaliacoes } from "./models/Avaliacao.js";
 import { cadastrarAssinatura, excluirAssinatura, listarAssinaturas } from "./models/Assinatura.js";
 import { atualizarCategoria, cadastrarCategoria, excluirCategoria, listarCategorias } from "./models/Categoria.js";
-import { cadastrarCertificado, listarCertificados } from "./models/Certificado.js";
+import { cadastrarCertificado, excluirCertificado, listarCertificados } from "./models/Certificado.js";
 import { atualizarCurso, atualizarTotalAulasCurso, cadastrarCurso, excluirCurso, listarCursos } from "./models/Curso.js";
 import { cadastrarMatricula, excluirMatricula, listarMatriculas } from "./models/Matricula.js";
 import { cadastrarModulo, listarModulos } from "./models/Modulo.js";
@@ -10,7 +10,7 @@ import { cadastrarPagamento, excluirPagamento, listarPagamentos } from "./models
 import { cadastrarPlano, excluirPlano, listarPlanos } from "./models/Plano.js";
 import { cadastrarProgressoAula, excluirProgressoAula, listarProgressoAulas } from "./models/ProgressoAula.js";
 import { cadastrarTrilha, listarTrilhas } from "./models/Trilha.js";
-import { cadastrarTrilhaCurso, listarTrilhasCursos } from "./models/TrilhaCurso.js";
+import { cadastrarTrilhaCurso, excluirTrilhaCurso, listarTrilhasCursos } from "./models/TrilhaCurso.js";
 import { atualizarUsuario, cadastrarUsuario, excluirUsuario, listarUsuarios } from "./models/Usuario.js";
 
 const formCategoria = document.getElementById("form-categoria");
@@ -1567,6 +1567,10 @@ const notaAvaliacaoSelect = document.getElementById("nota-avaliacao");
 const comentarioAvaliacaoInput = document.getElementById("comentario-avaliacao");
 const dataAvaliacaoInput = document.getElementById("data-avaliacao");
 const tabelaAvaliacoesBody = document.getElementById("tabela-avaliacoes");
+const botaoInserirAvaliacao = document.getElementById("btn-inserir-avaliacao");
+const modalAvaliacaoElement = document.getElementById("modal-avaliacao");
+const tituloModalAvaliacao = document.getElementById("titulo-modal-avaliacao");
+const botaoSalvarAvaliacao = document.getElementById("btn-salvar-avaliacao");
 
 if (
     formAvaliacao &&
@@ -1575,8 +1579,36 @@ if (
     notaAvaliacaoSelect &&
     comentarioAvaliacaoInput &&
     dataAvaliacaoInput &&
-    tabelaAvaliacoesBody
+    tabelaAvaliacoesBody &&
+    botaoInserirAvaliacao &&
+    modalAvaliacaoElement &&
+    tituloModalAvaliacao &&
+    botaoSalvarAvaliacao
 ) {
+    const modalAvaliacao = window.bootstrap ? new window.bootstrap.Modal(modalAvaliacaoElement) : null;
+
+    function dataAtualFormatoInputAvaliacao() {
+        const hoje = new Date();
+        const ano = hoje.getFullYear();
+        const mes = String(hoje.getMonth() + 1).padStart(2, "0");
+        const dia = String(hoje.getDate()).padStart(2, "0");
+        return `${ano}-${mes}-${dia}`;
+    }
+
+    function configurarModalInsercaoAvaliacao() {
+        formAvaliacao.reset();
+        dataAvaliacaoInput.value = dataAtualFormatoInputAvaliacao();
+        tituloModalAvaliacao.textContent = "Nova Avaliacao";
+        botaoSalvarAvaliacao.textContent = "Salvar";
+    }
+
+    function abrirModalInsercaoAvaliacao() {
+        preencherSelectUsuariosAvaliacao();
+        preencherSelectCursosAvaliacao();
+        configurarModalInsercaoAvaliacao();
+        usuarioAvaliacaoSelect.focus();
+    }
+
     function preencherSelectUsuariosAvaliacao() {
         usuarioAvaliacaoSelect.innerHTML = "";
 
@@ -1628,7 +1660,7 @@ if (
         if (avaliacoes.length === 0) {
             const linhaVazia = document.createElement("tr");
             const colunaVazia = document.createElement("td");
-            colunaVazia.colSpan = 5;
+            colunaVazia.colSpan = 6;
             colunaVazia.className = "text-center text-muted";
             colunaVazia.textContent = "Nenhuma avaliacao cadastrada.";
             linhaVazia.appendChild(colunaVazia);
@@ -1654,11 +1686,48 @@ if (
             const colunaData = document.createElement("td");
             colunaData.textContent = avaliacao.dataAvaliacao;
 
+            const colunaAcoes = document.createElement("td");
+            colunaAcoes.className = "text-center";
+
+            const dropdown = document.createElement("div");
+            dropdown.className = "dropup";
+
+            const botaoAcoes = document.createElement("button");
+            botaoAcoes.type = "button";
+            botaoAcoes.className = "btn btn-sm btn-outline-secondary dropdown-toggle";
+            botaoAcoes.setAttribute("data-bs-toggle", "dropdown");
+            botaoAcoes.textContent = "Acoes";
+
+            const menu = document.createElement("ul");
+            menu.className = "dropdown-menu";
+
+            const itemExcluir = document.createElement("li");
+            const botaoExcluir = document.createElement("button");
+            botaoExcluir.type = "button";
+            botaoExcluir.className = "dropdown-item text-danger";
+            botaoExcluir.textContent = "Excluir";
+            botaoExcluir.addEventListener("click", () => {
+                const confirmar = window.confirm("Deseja excluir esta avaliacao?");
+                if (!confirmar) {
+                    return;
+                }
+
+                excluirAvaliacao(avaliacao.id);
+                renderizarAvaliacoes();
+            });
+            itemExcluir.appendChild(botaoExcluir);
+
+            menu.appendChild(itemExcluir);
+            dropdown.appendChild(botaoAcoes);
+            dropdown.appendChild(menu);
+            colunaAcoes.appendChild(dropdown);
+
             linha.appendChild(colunaUsuario);
             linha.appendChild(colunaCurso);
             linha.appendChild(colunaNota);
             linha.appendChild(colunaComentario);
             linha.appendChild(colunaData);
+            linha.appendChild(colunaAcoes);
             tabelaAvaliacoesBody.appendChild(linha);
         });
     }
@@ -1698,9 +1767,16 @@ if (
 
         cadastrarAvaliacao(idUsuario, idCurso, nota, comentario, dataAvaliacao);
         renderizarAvaliacoes();
-        formAvaliacao.reset();
+        configurarModalInsercaoAvaliacao();
+        if (modalAvaliacao) {
+            modalAvaliacao.hide();
+        }
     });
 
+    botaoInserirAvaliacao.addEventListener("click", abrirModalInsercaoAvaliacao);
+    modalAvaliacaoElement.addEventListener("hidden.bs.modal", configurarModalInsercaoAvaliacao);
+
+    configurarModalInsercaoAvaliacao();
     preencherSelectUsuariosAvaliacao();
     preencherSelectCursosAvaliacao();
     renderizarAvaliacoes();
@@ -1716,6 +1792,10 @@ const nomeCursoCertificado = document.getElementById("nome-curso-certificado");
 const dataEmissaoCertificado = document.getElementById("data-emissao-certificado");
 const codigoVerificacaoCertificado = document.getElementById("codigo-verificacao-certificado");
 const tabelaCertificadosBody = document.getElementById("tabela-certificados");
+const botaoInserirCertificado = document.getElementById("btn-inserir-certificado");
+const modalCertificadoElement = document.getElementById("modal-certificado");
+const tituloModalCertificado = document.getElementById("titulo-modal-certificado");
+const botaoSalvarCertificado = document.getElementById("btn-salvar-certificado");
 
 if (
     formCertificado &&
@@ -1727,11 +1807,46 @@ if (
     nomeCursoCertificado &&
     dataEmissaoCertificado &&
     codigoVerificacaoCertificado &&
-    tabelaCertificadosBody
+    tabelaCertificadosBody &&
+    botaoInserirCertificado &&
+    modalCertificadoElement &&
+    tituloModalCertificado &&
+    botaoSalvarCertificado
 ) {
+    const modalCertificado = window.bootstrap ? new window.bootstrap.Modal(modalCertificadoElement) : null;
+
     function gerarProximoCodigoCertificado() {
-        const proximoId = listarCertificados().length + 1;
+        const certificados = listarCertificados();
+        if (certificados.length === 0) {
+            return "CERT-001";
+        }
+
+        const maiorId = Math.max(...certificados.map((certificado) => Number(certificado.id) || 0));
+        const proximoId = maiorId + 1;
         return `CERT-${String(proximoId).padStart(3, "0")}`;
+    }
+
+    function dataAtualFormatoInputCertificado() {
+        const hoje = new Date();
+        const ano = hoje.getFullYear();
+        const mes = String(hoje.getMonth() + 1).padStart(2, "0");
+        const dia = String(hoje.getDate()).padStart(2, "0");
+        return `${ano}-${mes}-${dia}`;
+    }
+
+    function configurarModalInsercaoCertificado() {
+        formCertificado.reset();
+        dataEmissaoInput.value = dataAtualFormatoInputCertificado();
+        codigoVerificacaoInput.value = gerarProximoCodigoCertificado();
+        tituloModalCertificado.textContent = "Gerar Certificado";
+        botaoSalvarCertificado.textContent = "Salvar";
+    }
+
+    function abrirModalInsercaoCertificado() {
+        preencherSelectUsuariosCertificado();
+        preencherSelectCursosCertificado();
+        configurarModalInsercaoCertificado();
+        usuarioCertificadoSelect.focus();
     }
 
     function preencherSelectUsuariosCertificado() {
@@ -1842,7 +1957,7 @@ if (
         if (certificados.length === 0) {
             const linhaVazia = document.createElement("tr");
             const colunaVazia = document.createElement("td");
-            colunaVazia.colSpan = 4;
+            colunaVazia.colSpan = 5;
             colunaVazia.className = "text-center text-muted";
             colunaVazia.textContent = "Nenhum certificado gerado.";
             linhaVazia.appendChild(colunaVazia);
@@ -1865,10 +1980,61 @@ if (
             const colunaData = document.createElement("td");
             colunaData.textContent = certificado.dataEmissao;
 
+            const colunaAcoes = document.createElement("td");
+            colunaAcoes.className = "text-center";
+
+            const dropdown = document.createElement("div");
+            dropdown.className = "dropup";
+
+            const botaoAcoes = document.createElement("button");
+            botaoAcoes.type = "button";
+            botaoAcoes.className = "btn btn-sm btn-outline-secondary dropdown-toggle";
+            botaoAcoes.setAttribute("data-bs-toggle", "dropdown");
+            botaoAcoes.textContent = "Acoes";
+
+            const menu = document.createElement("ul");
+            menu.className = "dropdown-menu";
+
+            const itemVisualizar = document.createElement("li");
+            const botaoVisualizar = document.createElement("button");
+            botaoVisualizar.type = "button";
+            botaoVisualizar.className = "dropdown-item";
+            botaoVisualizar.textContent = "Visualizar";
+            botaoVisualizar.addEventListener("click", () => {
+                atualizarVisualCertificado(certificado);
+            });
+            itemVisualizar.appendChild(botaoVisualizar);
+
+            const itemExcluir = document.createElement("li");
+            const botaoExcluir = document.createElement("button");
+            botaoExcluir.type = "button";
+            botaoExcluir.className = "dropdown-item text-danger";
+            botaoExcluir.textContent = "Excluir";
+            botaoExcluir.addEventListener("click", () => {
+                const confirmar = window.confirm("Deseja excluir este certificado?");
+                if (!confirmar) {
+                    return;
+                }
+
+                excluirCertificado(certificado.id);
+                const ultimo = listarCertificados().slice(-1)[0] || null;
+                atualizarVisualCertificado(ultimo);
+                renderizarCertificados();
+                codigoVerificacaoInput.value = gerarProximoCodigoCertificado();
+            });
+            itemExcluir.appendChild(botaoExcluir);
+
+            menu.appendChild(itemVisualizar);
+            menu.appendChild(itemExcluir);
+            dropdown.appendChild(botaoAcoes);
+            dropdown.appendChild(menu);
+            colunaAcoes.appendChild(dropdown);
+
             linha.appendChild(colunaUsuario);
             linha.appendChild(colunaCurso);
             linha.appendChild(colunaCodigo);
             linha.appendChild(colunaData);
+            linha.appendChild(colunaAcoes);
             tabelaCertificadosBody.appendChild(linha);
         });
     }
@@ -1918,16 +2084,21 @@ if (
         const novoCertificado = cadastrarCertificado(idUsuario, idCurso, dataEmissao);
         atualizarVisualCertificado(novoCertificado);
         renderizarCertificados();
-        formCertificado.reset();
-        codigoVerificacaoInput.value = gerarProximoCodigoCertificado();
+        configurarModalInsercaoCertificado();
+        if (modalCertificado) {
+            modalCertificado.hide();
+        }
     });
+
+    botaoInserirCertificado.addEventListener("click", abrirModalInsercaoCertificado);
+    modalCertificadoElement.addEventListener("hidden.bs.modal", configurarModalInsercaoCertificado);
 
     const ultimoCertificado = listarCertificados().slice(-1)[0] || null;
     atualizarVisualCertificado(ultimoCertificado);
     preencherSelectUsuariosCertificado();
     preencherSelectCursosCertificado();
     renderizarCertificados();
-    codigoVerificacaoInput.value = gerarProximoCodigoCertificado();
+    configurarModalInsercaoCertificado();
 }
 
 const formPlano = document.getElementById("form-plano");
@@ -2802,10 +2973,37 @@ const nomeTrilhaSelecionada = document.getElementById("nome-trilha-selecionada")
 const cursoTrilhaSelect = document.getElementById("curso-trilha");
 const ordemCursoTrilhaInput = document.getElementById("ordem-curso-trilha");
 const tabelaTrilhaCursosBody = document.getElementById("tabela-trilha-cursos");
+const botaoInserirTrilhaCurso = document.getElementById("btn-inserir-trilha-curso");
+const modalTrilhaCursoElement = document.getElementById("modal-trilha-curso");
+const tituloModalTrilhaCurso = document.getElementById("titulo-modal-trilha-curso");
+const botaoSalvarTrilhaCurso = document.getElementById("btn-salvar-trilha-curso");
 
-if (formTrilhaCursos && nomeTrilhaSelecionada && cursoTrilhaSelect && ordemCursoTrilhaInput && tabelaTrilhaCursosBody) {
+if (
+    formTrilhaCursos &&
+    nomeTrilhaSelecionada &&
+    cursoTrilhaSelect &&
+    ordemCursoTrilhaInput &&
+    tabelaTrilhaCursosBody &&
+    botaoInserirTrilhaCurso &&
+    modalTrilhaCursoElement &&
+    tituloModalTrilhaCurso &&
+    botaoSalvarTrilhaCurso
+) {
+    const modalTrilhaCurso = window.bootstrap ? new window.bootstrap.Modal(modalTrilhaCursoElement) : null;
     const parametrosUrl = new URLSearchParams(window.location.search);
     const idTrilhaAtual = Number(parametrosUrl.get("idTrilha"));
+
+    function configurarModalInsercaoTrilhaCurso() {
+        formTrilhaCursos.reset();
+        tituloModalTrilhaCurso.textContent = "Adicionar Curso";
+        botaoSalvarTrilhaCurso.textContent = "Salvar";
+    }
+
+    function abrirModalInsercaoTrilhaCurso() {
+        preencherSelectCursosDaTrilha();
+        configurarModalInsercaoTrilhaCurso();
+        cursoTrilhaSelect.focus();
+    }
 
     function mostrarErroTrilhaCursos(mensagem) {
         nomeTrilhaSelecionada.className = "fw-semibold text-danger";
@@ -2814,7 +3012,7 @@ if (formTrilhaCursos && nomeTrilhaSelecionada && cursoTrilhaSelect && ordemCurso
 
         const linhaErro = document.createElement("tr");
         const colunaErro = document.createElement("td");
-        colunaErro.colSpan = 2;
+        colunaErro.colSpan = 3;
         colunaErro.className = "text-center text-danger";
         colunaErro.textContent = mensagem;
         linhaErro.appendChild(colunaErro);
@@ -2826,6 +3024,7 @@ if (formTrilhaCursos && nomeTrilhaSelecionada && cursoTrilhaSelect && ordemCurso
         if (botaoAdicionar) {
             botaoAdicionar.disabled = true;
         }
+        botaoInserirTrilhaCurso.disabled = true;
     }
 
     const trilhaAtual = listarTrilhas().find((trilha) => Number(trilha.id) === idTrilhaAtual);
@@ -2864,7 +3063,7 @@ if (formTrilhaCursos && nomeTrilhaSelecionada && cursoTrilhaSelect && ordemCurso
             if (vinculos.length === 0) {
                 const linhaVazia = document.createElement("tr");
                 const colunaVazia = document.createElement("td");
-                colunaVazia.colSpan = 2;
+                colunaVazia.colSpan = 3;
                 colunaVazia.className = "text-center text-muted";
                 colunaVazia.textContent = "Nenhum curso vinculado a esta trilha.";
                 linhaVazia.appendChild(colunaVazia);
@@ -2881,8 +3080,45 @@ if (formTrilhaCursos && nomeTrilhaSelecionada && cursoTrilhaSelect && ordemCurso
                 const colunaOrdem = document.createElement("td");
                 colunaOrdem.textContent = vinculo.ordem;
 
+                const colunaAcoes = document.createElement("td");
+                colunaAcoes.className = "text-center";
+
+                const dropdown = document.createElement("div");
+                dropdown.className = "dropup";
+
+                const botaoAcoes = document.createElement("button");
+                botaoAcoes.type = "button";
+                botaoAcoes.className = "btn btn-sm btn-outline-secondary dropdown-toggle";
+                botaoAcoes.setAttribute("data-bs-toggle", "dropdown");
+                botaoAcoes.textContent = "Acoes";
+
+                const menu = document.createElement("ul");
+                menu.className = "dropdown-menu";
+
+                const itemExcluir = document.createElement("li");
+                const botaoExcluir = document.createElement("button");
+                botaoExcluir.type = "button";
+                botaoExcluir.className = "dropdown-item text-danger";
+                botaoExcluir.textContent = "Excluir";
+                botaoExcluir.addEventListener("click", () => {
+                    const confirmar = window.confirm("Deseja remover este curso da trilha?");
+                    if (!confirmar) {
+                        return;
+                    }
+
+                    excluirTrilhaCurso(vinculo.idTrilha, vinculo.idCurso);
+                    renderizarCursosDaTrilha();
+                });
+                itemExcluir.appendChild(botaoExcluir);
+
+                menu.appendChild(itemExcluir);
+                dropdown.appendChild(botaoAcoes);
+                dropdown.appendChild(menu);
+                colunaAcoes.appendChild(dropdown);
+
                 linha.appendChild(colunaCurso);
                 linha.appendChild(colunaOrdem);
+                linha.appendChild(colunaAcoes);
                 tabelaTrilhaCursosBody.appendChild(linha);
             });
         }
@@ -2917,10 +3153,16 @@ if (formTrilhaCursos && nomeTrilhaSelecionada && cursoTrilhaSelect && ordemCurso
 
             cadastrarTrilhaCurso(idTrilhaAtual, idCurso, ordem);
             renderizarCursosDaTrilha();
-            formTrilhaCursos.reset();
-            cursoTrilhaSelect.focus();
+            configurarModalInsercaoTrilhaCurso();
+            if (modalTrilhaCurso) {
+                modalTrilhaCurso.hide();
+            }
         });
 
+        botaoInserirTrilhaCurso.addEventListener("click", abrirModalInsercaoTrilhaCurso);
+        modalTrilhaCursoElement.addEventListener("hidden.bs.modal", configurarModalInsercaoTrilhaCurso);
+
+        configurarModalInsercaoTrilhaCurso();
         preencherSelectCursosDaTrilha();
         renderizarCursosDaTrilha();
     }

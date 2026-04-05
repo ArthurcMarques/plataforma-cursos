@@ -9,52 +9,22 @@
     </head>
     <body class="bg-light">
         <main class="container py-5">
-            <section class="mb-4">
-                <h1 class="mb-2">Certificados</h1>
-                <p class="text-muted mb-0">
-                    Gere e visualize certificados para usu&aacute;rios que conclu&iacute;ram cursos.
-                </p>
-            </section>
-
-            <section class="bg-white border rounded-3 p-4 mb-4">
-                <h2 class="h5 mb-3">Gerar Certificado</h2>
-                <p class="text-muted small mb-3">
-                    Para gerar certificado, o usu&aacute;rio precisa ter pelo menos um progresso conclu&iacute;do no curso.
-                </p>
-                <form id="form-certificado">
-                    <div class="mb-3">
-                        <label for="usuario-certificado" class="form-label">Usu&aacute;rio</label>
-                        <select class="form-select" id="usuario-certificado" name="usuario">
-                            <option value="">Selecione um usu&aacute;rio</option>
-                        </select>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="curso-certificado" class="form-label">Curso</label>
-                        <select class="form-select" id="curso-certificado" name="curso">
-                            <option value="">Selecione um curso</option>
-                        </select>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="codigo-verificacao" class="form-label">C&oacute;digo de verifica&ccedil;&atilde;o</label>
-                        <input
-                            type="text"
-                            class="form-control"
-                            id="codigo-verificacao"
-                            name="codigoVerificacao"
-                            placeholder="Ser&aacute; gerado automaticamente"
-                            readonly
-                        >
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="data-emissao" class="form-label">Data de emiss&atilde;o</label>
-                        <input type="date" class="form-control" id="data-emissao" name="dataEmissao">
-                    </div>
-
-                    <button type="submit" class="btn btn-primary">Gerar certificado</button>
-                </form>
+            <section class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+                <div>
+                    <h1 class="mb-1">Certificados</h1>
+                    <p class="text-muted mb-0">
+                        Gere e visualize certificados para usu&aacute;rios que conclu&iacute;ram cursos.
+                    </p>
+                </div>
+                <button
+                    type="button"
+                    class="btn btn-primary"
+                    id="btn-inserir-certificado"
+                    data-bs-toggle="modal"
+                    data-bs-target="#modal-certificado"
+                >
+                    Inserir
+                </button>
             </section>
 
             <section class="bg-white border rounded-3 p-4 mb-4">
@@ -86,17 +56,75 @@
                                 <th>Curso</th>
                                 <th>C&oacute;digo</th>
                                 <th>Data de emiss&atilde;o</th>
+                                <th>A&ccedil;&otilde;es</th>
                             </tr>
                         </thead>
                         <tbody id="tabela-certificados">
                             <tr>
-                                <td colspan="4" class="text-center text-muted">Nenhum certificado gerado.</td>
+                                <td colspan="5" class="text-center text-muted">Nenhum certificado gerado.</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             </section>
         </main>
+
+        <div class="modal fade" id="modal-certificado" tabindex="-1" aria-labelledby="titulo-modal-certificado" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 class="modal-title fs-5" id="titulo-modal-certificado">Gerar Certificado</h2>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                    </div>
+
+                    <form id="form-certificado">
+                        <div class="modal-body">
+                            <p class="text-muted small mb-3">
+                                Para gerar certificado, o usu&aacute;rio precisa ter pelo menos um progresso conclu&iacute;do no curso.
+                            </p>
+
+                            <div class="mb-3">
+                                <label for="usuario-certificado" class="form-label">Usu&aacute;rio</label>
+                                <select class="form-select" id="usuario-certificado" name="usuario">
+                                    <option value="">Selecione um usu&aacute;rio</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="curso-certificado" class="form-label">Curso</label>
+                                <select class="form-select" id="curso-certificado" name="curso">
+                                    <option value="">Selecione um curso</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="codigo-verificacao" class="form-label">C&oacute;digo de verifica&ccedil;&atilde;o</label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="codigo-verificacao"
+                                    name="codigoVerificacao"
+                                    placeholder="Ser&aacute; gerado automaticamente"
+                                    readonly
+                                >
+                            </div>
+
+                            <div class="mb-0">
+                                <label for="data-emissao" class="form-label">Data de emiss&atilde;o</label>
+                                <input type="date" class="form-control" id="data-emissao" name="dataEmissao">
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary" id="btn-salvar-certificado">Salvar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
         <script type="module" src="../js/main.js"></script>
     </body>
 </html>

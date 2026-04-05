@@ -18,7 +18,12 @@ const certificados = carregarListaDoStorage(CHAVE_STORAGE_CERTIFICADOS).map((ite
 });
 
 function gerarIdCertificado() {
-    return certificados.length + 1;
+    if (certificados.length === 0) {
+        return 1;
+    }
+
+    const maiorId = Math.max(...certificados.map((certificado) => Number(certificado.id) || 0));
+    return maiorId + 1;
 }
 
 function gerarCodigoVerificacao(idCertificado) {
@@ -39,11 +44,23 @@ function listarCertificados() {
     return certificados;
 }
 
+function excluirCertificado(id) {
+    const indice = certificados.findIndex((item) => Number(item.id) === Number(id));
+    if (indice === -1) {
+        return false;
+    }
+
+    certificados.splice(indice, 1);
+    salvarListaNoStorage(CHAVE_STORAGE_CERTIFICADOS, certificados);
+    return true;
+}
+
 export {
     Certificado,
     certificados,
     gerarIdCertificado,
     gerarCodigoVerificacao,
     cadastrarCertificado,
-    listarCertificados
+    listarCertificados,
+    excluirCertificado
 };
