@@ -1,6 +1,6 @@
 import { cadastrarAula, listarAulas } from "./models/Aula.js";
 import { cadastrarCategoria, listarCategorias } from "./models/Categoria.js";
-import { cadastrarCurso, listarCursos } from "./models/Curso.js";
+import { atualizarTotalAulasCurso, cadastrarCurso, listarCursos } from "./models/Curso.js";
 import { cadastrarMatricula, listarMatriculas } from "./models/Matricula.js";
 import { cadastrarModulo, listarModulos } from "./models/Modulo.js";
 import { cadastrarUsuario, listarUsuarios } from "./models/Usuario.js";
@@ -275,6 +275,26 @@ if (
         return instrutor ? instrutor.nomeCompleto : "-";
     }
 
+    function contarAulasDoCurso(idCurso) {
+        const modulos = listarModulos();
+        const aulas = listarAulas();
+        let totalAulas = 0;
+
+        modulos.forEach((modulo) => {
+            if (Number(modulo.idCurso) !== Number(idCurso)) {
+                return;
+            }
+
+            aulas.forEach((aula) => {
+                if (Number(aula.idModulo) === Number(modulo.id)) {
+                    totalAulas += 1;
+                }
+            });
+        });
+
+        return totalAulas;
+    }
+
     function renderizarCursos() {
         const cursos = listarCursos();
         tabelaCursosBody.innerHTML = "";
@@ -282,7 +302,7 @@ if (
         if (cursos.length === 0) {
             const linhaVazia = document.createElement("tr");
             const colunaVazia = document.createElement("td");
-            colunaVazia.colSpan = 5;
+            colunaVazia.colSpan = 6;
             colunaVazia.className = "text-center text-muted";
             colunaVazia.textContent = "Nenhum curso cadastrado.";
             linhaVazia.appendChild(colunaVazia);
@@ -305,6 +325,14 @@ if (
             const colunaNivel = document.createElement("td");
             colunaNivel.textContent = curso.nivel;
 
+            const totalAulasCalculado = contarAulasDoCurso(curso.id);
+            if ((Number(curso.totalAulas) || 0) !== totalAulasCalculado) {
+                atualizarTotalAulasCurso(curso.id, totalAulasCalculado);
+            }
+
+            const colunaTotalAulas = document.createElement("td");
+            colunaTotalAulas.textContent = totalAulasCalculado;
+
             const colunaAcoes = document.createElement("td");
             const linkModulos = document.createElement("a");
             linkModulos.className = "btn btn-sm btn-outline-secondary";
@@ -316,6 +344,7 @@ if (
             linha.appendChild(colunaCategoria);
             linha.appendChild(colunaInstrutor);
             linha.appendChild(colunaNivel);
+            linha.appendChild(colunaTotalAulas);
             linha.appendChild(colunaAcoes);
             tabelaCursosBody.appendChild(linha);
         });
@@ -556,6 +585,30 @@ if (
         });
         nomeCurso.textContent = cursoRelacionado ? cursoRelacionado.titulo : "Curso nao encontrado.";
 
+        function atualizarTotalAulasDoCursoAtual() {
+            const idCursoRelacionado = Number(moduloAtual.idCurso);
+            if (!idCursoRelacionado) {
+                return;
+            }
+
+            const modulosDoCurso = listarModulos().filter((modulo) => {
+                return Number(modulo.idCurso) === idCursoRelacionado;
+            });
+
+            const aulas = listarAulas();
+            let totalAulas = 0;
+
+            modulosDoCurso.forEach((modulo) => {
+                aulas.forEach((aula) => {
+                    if (Number(aula.idModulo) === Number(modulo.id)) {
+                        totalAulas += 1;
+                    }
+                });
+            });
+
+            atualizarTotalAulasCurso(idCursoRelacionado, totalAulas);
+        }
+
         function renderizarAulasModulo() {
             const aulasModulo = listarAulas().filter((aula) => Number(aula.idModulo) === idModuloAtual);
             tabelaAulasBody.innerHTML = "";
@@ -638,6 +691,7 @@ if (
             }
 
             cadastrarAula(idModuloAtual, titulo, tipoConteudo, urlConteudo, duracaoMinutos, ordem);
+            atualizarTotalAulasDoCursoAtual();
             renderizarAulasModulo();
             formAula.reset();
             tituloAulaInput.focus();
