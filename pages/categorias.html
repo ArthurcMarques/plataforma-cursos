@@ -16,16 +16,16 @@
 
             <section class="bg-white border rounded-3 p-4 mb-4">
                 <h2 class="h5 mb-3">Nova Categoria</h2>
-                <form>
+                <form id="form-categoria">
                     <div class="mb-3">
-                        <label for="nomeCategoria" class="form-label">Nome</label>
-                        <input type="text" class="form-control" id="nomeCategoria" name="nome">
+                        <label for="nome-categoria" class="form-label">Nome</label>
+                        <input type="text" class="form-control" id="nome-categoria" name="nome" required>
                     </div>
                     <div class="mb-3">
-                        <label for="descricaoCategoria" class="form-label">Descricao</label>
-                        <textarea class="form-control" id="descricaoCategoria" name="descricao" rows="3"></textarea>
+                        <label for="descricao-categoria" class="form-label">Descrição</label>
+                        <textarea class="form-control" id="descricao-categoria" name="descricao" rows="3"></textarea>
                     </div>
-                    <button type="button" class="btn btn-primary">Cadastrar</button>
+                    <button type="submit" class="btn btn-primary">Cadastrar</button>
                 </form>
             </section>
 
@@ -36,17 +36,14 @@
                         <thead class="table-light">
                             <tr>
                                 <th>Nome</th>
-                                <th>Descricao</th>
+                                <th>Descrição</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td colspan="2" class="text-center text-muted">Nenhuma categoria cadastrada.</td>
-                            </tr>
-                        </tbody>
+                        <tbody id="tabela-categorias"></tbody>
                     </table>
                 </div>
             </section>
         </main>
+        <script type="module" src="../js/main.js"></script>
     </body>
 </html>
