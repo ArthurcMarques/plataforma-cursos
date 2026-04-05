@@ -1379,6 +1379,46 @@ if (
         return plano ? plano.nome : "-";
     }
 
+    function formatarDataParaInput(data) {
+        const ano = data.getFullYear();
+        const mes = String(data.getMonth() + 1).padStart(2, "0");
+        const dia = String(data.getDate()).padStart(2, "0");
+        return `${ano}-${mes}-${dia}`;
+    }
+
+    function calcularDataFimPelaDuracao(dataInicio, duracaoMeses) {
+        if (!dataInicio || !duracaoMeses) {
+            return "";
+        }
+
+        const dataCalculada = new Date(`${dataInicio}T00:00:00`);
+        if (Number.isNaN(dataCalculada.getTime())) {
+            return "";
+        }
+
+        dataCalculada.setMonth(dataCalculada.getMonth() + Number(duracaoMeses));
+        return formatarDataParaInput(dataCalculada);
+    }
+
+    function preencherDataFimAutomatica() {
+        const idPlano = Number(planoAssinaturaSelect.value);
+        const dataInicio = dataInicioAssinaturaInput.value;
+
+        if (!idPlano || dataInicio === "") {
+            return;
+        }
+
+        const plano = listarPlanos().find((item) => Number(item.id) === idPlano);
+        if (!plano) {
+            return;
+        }
+
+        const dataFimCalculada = calcularDataFimPelaDuracao(dataInicio, plano.duracaoMeses);
+        if (dataFimCalculada !== "") {
+            dataFimAssinaturaInput.value = dataFimCalculada;
+        }
+    }
+
     function renderizarAssinaturas() {
         const assinaturas = listarAssinaturas();
         tabelaAssinaturasBody.innerHTML = "";
@@ -1423,6 +1463,11 @@ if (
         const idUsuario = Number(usuarioAssinaturaSelect.value);
         const idPlano = Number(planoAssinaturaSelect.value);
         const dataInicio = dataInicioAssinaturaInput.value;
+
+        if (dataFimAssinaturaInput.value === "") {
+            preencherDataFimAutomatica();
+        }
+
         const dataFim = dataFimAssinaturaInput.value;
 
         if (!idUsuario) {
@@ -1468,6 +1513,9 @@ if (
         renderizarAssinaturas();
         formAssinatura.reset();
     });
+
+    planoAssinaturaSelect.addEventListener("change", preencherDataFimAutomatica);
+    dataInicioAssinaturaInput.addEventListener("change", preencherDataFimAutomatica);
 
     preencherSelectUsuariosAssinatura();
     preencherSelectPlanosAssinatura();
