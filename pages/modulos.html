@@ -9,30 +9,24 @@
     </head>
     <body class="bg-light">
         <main class="container py-5">
-            <section class="mb-4">
-                <h1 class="mb-2">M&oacute;dulos do Curso</h1>
-                <p class="text-muted mb-1">Curso selecionado:</p>
-                <p class="fw-semibold mb-0" id="nome-curso-selecionado">Nome do curso (placeholder)</p>
+            <section class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+                <div>
+                    <h1 class="mb-1">M&oacute;dulos do Curso</h1>
+                    <p class="text-muted mb-1">Curso selecionado:</p>
+                    <p class="fw-semibold mb-0" id="nome-curso-selecionado">Nome do curso (placeholder)</p>
+                </div>
+                <button
+                    type="button"
+                    class="btn btn-primary"
+                    id="btn-inserir-modulo"
+                    data-bs-toggle="modal"
+                    data-bs-target="#modal-modulo"
+                >
+                    Inserir
+                </button>
             </section>
 
             <section class="bg-white border rounded-3 p-4 mb-4">
-                <h2 class="h5 mb-3">Novo M&oacute;dulo</h2>
-                <form id="form-modulo">
-                    <div class="mb-3">
-                        <label for="titulo-modulo" class="form-label">T&iacute;tulo do m&oacute;dulo</label>
-                        <input type="text" class="form-control" id="titulo-modulo" name="titulo">
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="ordem-modulo" class="form-label">Ordem</label>
-                        <input type="number" class="form-control" id="ordem-modulo" name="ordem" min="1">
-                    </div>
-
-                    <button type="submit" class="btn btn-primary">Cadastrar m&oacute;dulo</button>
-                </form>
-            </section>
-
-            <section class="bg-white border rounded-3 p-4">
                 <h2 class="h5 mb-3">Lista de M&oacute;dulos</h2>
                 <div class="table-responsive">
                     <table class="table table-striped table-bordered mb-0">
@@ -45,19 +39,45 @@
                         </thead>
                         <tbody id="tabela-modulos">
                             <tr>
-                                <td class="text-muted">Nenhum m&oacute;dulo cadastrado.</td>
-                                <td class="text-muted">-</td>
-                                <td>
-                                    <button type="button" class="btn btn-sm btn-outline-secondary" disabled>
-                                        Gerenciar aulas
-                                    </button>
-                                </td>
+                                <td colspan="3" class="text-center text-muted">Nenhum m&oacute;dulo cadastrado.</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             </section>
         </main>
+
+        <div class="modal fade" id="modal-modulo" tabindex="-1" aria-labelledby="titulo-modal-modulo" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 class="modal-title fs-5" id="titulo-modal-modulo">Novo M&oacute;dulo</h2>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                    </div>
+
+                    <form id="form-modulo">
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="titulo-modulo" class="form-label">T&iacute;tulo do m&oacute;dulo</label>
+                                <input type="text" class="form-control" id="titulo-modulo" name="titulo">
+                            </div>
+
+                            <div class="mb-0">
+                                <label for="ordem-modulo" class="form-label">Ordem</label>
+                                <input type="number" class="form-control" id="ordem-modulo" name="ordem" min="1">
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary" id="btn-salvar-modulo">Salvar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
         <script type="module" src="../js/main.js"></script>
     </body>
 </html>

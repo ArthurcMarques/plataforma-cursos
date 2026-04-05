@@ -725,10 +725,36 @@ const tituloModuloInput = document.getElementById("titulo-modulo");
 const ordemModuloInput = document.getElementById("ordem-modulo");
 const nomeCursoSelecionado = document.getElementById("nome-curso-selecionado");
 const tabelaModulosBody = document.getElementById("tabela-modulos");
+const botaoInserirModulo = document.getElementById("btn-inserir-modulo");
+const modalModuloElement = document.getElementById("modal-modulo");
+const tituloModalModulo = document.getElementById("titulo-modal-modulo");
+const botaoSalvarModulo = document.getElementById("btn-salvar-modulo");
 
-if (formModulo && tituloModuloInput && ordemModuloInput && nomeCursoSelecionado && tabelaModulosBody) {
+if (
+    formModulo &&
+    tituloModuloInput &&
+    ordemModuloInput &&
+    nomeCursoSelecionado &&
+    tabelaModulosBody &&
+    botaoInserirModulo &&
+    modalModuloElement &&
+    tituloModalModulo &&
+    botaoSalvarModulo
+) {
+    const modalModulo = window.bootstrap ? new window.bootstrap.Modal(modalModuloElement) : null;
     const parametrosUrl = new URLSearchParams(window.location.search);
     const idCursoAtual = Number(parametrosUrl.get("idCurso"));
+
+    function configurarModalInsercaoModulo() {
+        formModulo.reset();
+        tituloModalModulo.textContent = "Novo Modulo";
+        botaoSalvarModulo.textContent = "Salvar";
+    }
+
+    function abrirModalInsercaoModulo() {
+        configurarModalInsercaoModulo();
+        tituloModuloInput.focus();
+    }
 
     function mostrarErroCurso(mensagem) {
         nomeCursoSelecionado.className = "fw-semibold text-danger mb-0";
@@ -749,6 +775,7 @@ if (formModulo && tituloModuloInput && ordemModuloInput && nomeCursoSelecionado 
         if (botaoCadastrar) {
             botaoCadastrar.disabled = true;
         }
+        botaoInserirModulo.disabled = true;
     }
 
     const cursoAtual = listarCursos().find((curso) => Number(curso.id) === idCursoAtual);
@@ -783,11 +810,31 @@ if (formModulo && tituloModuloInput && ordemModuloInput && nomeCursoSelecionado 
                 colunaOrdem.textContent = modulo.ordem;
 
                 const colunaAcoes = document.createElement("td");
+                colunaAcoes.className = "text-center";
+
+                const dropdown = document.createElement("div");
+                dropdown.className = "dropdown";
+
+                const botaoAcoes = document.createElement("button");
+                botaoAcoes.type = "button";
+                botaoAcoes.className = "btn btn-sm btn-outline-secondary dropdown-toggle";
+                botaoAcoes.setAttribute("data-bs-toggle", "dropdown");
+                botaoAcoes.textContent = "Acoes";
+
+                const menu = document.createElement("ul");
+                menu.className = "dropdown-menu";
+
+                const itemGerenciar = document.createElement("li");
                 const linkAulas = document.createElement("a");
-                linkAulas.className = "btn btn-sm btn-outline-secondary";
+                linkAulas.className = "dropdown-item";
                 linkAulas.href = `./aulas.html?idModulo=${modulo.id}`;
                 linkAulas.textContent = "Gerenciar aulas";
-                colunaAcoes.appendChild(linkAulas);
+                itemGerenciar.appendChild(linkAulas);
+
+                menu.appendChild(itemGerenciar);
+                dropdown.appendChild(botaoAcoes);
+                dropdown.appendChild(menu);
+                colunaAcoes.appendChild(dropdown);
 
                 linha.appendChild(colunaTitulo);
                 linha.appendChild(colunaOrdem);
@@ -826,10 +873,16 @@ if (formModulo && tituloModuloInput && ordemModuloInput && nomeCursoSelecionado 
 
             cadastrarModulo(idCursoAtual, titulo, ordem);
             renderizarModulosCurso();
-            formModulo.reset();
-            tituloModuloInput.focus();
+            configurarModalInsercaoModulo();
+            if (modalModulo) {
+                modalModulo.hide();
+            }
         });
 
+        botaoInserirModulo.addEventListener("click", abrirModalInsercaoModulo);
+        modalModuloElement.addEventListener("hidden.bs.modal", configurarModalInsercaoModulo);
+
+        configurarModalInsercaoModulo();
         renderizarModulosCurso();
     }
 }
@@ -2182,8 +2235,36 @@ const tituloTrilhaInput = document.getElementById("titulo-trilha");
 const descricaoTrilhaInput = document.getElementById("descricao-trilha");
 const categoriaTrilhaSelect = document.getElementById("categoria-trilha");
 const tabelaTrilhasBody = document.getElementById("tabela-trilhas");
+const botaoInserirTrilha = document.getElementById("btn-inserir-trilha");
+const modalTrilhaElement = document.getElementById("modal-trilha");
+const tituloModalTrilha = document.getElementById("titulo-modal-trilha");
+const botaoSalvarTrilha = document.getElementById("btn-salvar-trilha");
 
-if (formTrilha && tituloTrilhaInput && descricaoTrilhaInput && categoriaTrilhaSelect && tabelaTrilhasBody) {
+if (
+    formTrilha &&
+    tituloTrilhaInput &&
+    descricaoTrilhaInput &&
+    categoriaTrilhaSelect &&
+    tabelaTrilhasBody &&
+    botaoInserirTrilha &&
+    modalTrilhaElement &&
+    tituloModalTrilha &&
+    botaoSalvarTrilha
+) {
+    const modalTrilha = window.bootstrap ? new window.bootstrap.Modal(modalTrilhaElement) : null;
+
+    function configurarModalInsercaoTrilha() {
+        formTrilha.reset();
+        tituloModalTrilha.textContent = "Nova Trilha";
+        botaoSalvarTrilha.textContent = "Salvar";
+    }
+
+    function abrirModalInsercaoTrilha() {
+        preencherSelectCategoriasTrilha();
+        configurarModalInsercaoTrilha();
+        tituloTrilhaInput.focus();
+    }
+
     function preencherSelectCategoriasTrilha() {
         categoriaTrilhaSelect.innerHTML = "";
 
@@ -2235,11 +2316,29 @@ if (formTrilha && tituloTrilhaInput && descricaoTrilhaInput && categoriaTrilhaSe
 
             const colunaAcoes = document.createElement("td");
             colunaAcoes.className = "text-center";
+            const dropdown = document.createElement("div");
+            dropdown.className = "dropdown";
+
+            const botaoAcoes = document.createElement("button");
+            botaoAcoes.type = "button";
+            botaoAcoes.className = "btn btn-sm btn-outline-secondary dropdown-toggle";
+            botaoAcoes.setAttribute("data-bs-toggle", "dropdown");
+            botaoAcoes.textContent = "Acoes";
+
+            const menu = document.createElement("ul");
+            menu.className = "dropdown-menu";
+
+            const itemGerenciar = document.createElement("li");
             const linkGerenciar = document.createElement("a");
-            linkGerenciar.className = "btn btn-sm btn-outline-secondary";
+            linkGerenciar.className = "dropdown-item";
             linkGerenciar.href = `./trilha-cursos.html?idTrilha=${trilha.id}`;
             linkGerenciar.textContent = "Gerenciar cursos";
-            colunaAcoes.appendChild(linkGerenciar);
+            itemGerenciar.appendChild(linkGerenciar);
+
+            menu.appendChild(itemGerenciar);
+            dropdown.appendChild(botaoAcoes);
+            dropdown.appendChild(menu);
+            colunaAcoes.appendChild(dropdown);
 
             linha.appendChild(colunaTitulo);
             linha.appendChild(colunaCategoria);
@@ -2270,10 +2369,16 @@ if (formTrilha && tituloTrilhaInput && descricaoTrilhaInput && categoriaTrilhaSe
 
         cadastrarTrilha(titulo, descricao, idCategoria);
         renderizarTrilhas();
-        formTrilha.reset();
-        tituloTrilhaInput.focus();
+        configurarModalInsercaoTrilha();
+        if (modalTrilha) {
+            modalTrilha.hide();
+        }
     });
 
+    botaoInserirTrilha.addEventListener("click", abrirModalInsercaoTrilha);
+    modalTrilhaElement.addEventListener("hidden.bs.modal", configurarModalInsercaoTrilha);
+
+    configurarModalInsercaoTrilha();
     preencherSelectCategoriasTrilha();
     renderizarTrilhas();
 }
