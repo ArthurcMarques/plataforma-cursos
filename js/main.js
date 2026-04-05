@@ -9,6 +9,7 @@ import { cadastrarPagamento, listarPagamentos } from "./models/Pagamento.js";
 import { cadastrarPlano, listarPlanos } from "./models/Plano.js";
 import { cadastrarProgressoAula, listarProgressoAulas } from "./models/ProgressoAula.js";
 import { cadastrarTrilha, listarTrilhas } from "./models/Trilha.js";
+import { cadastrarTrilhaCurso, listarTrilhasCursos } from "./models/TrilhaCurso.js";
 import { cadastrarUsuario, listarUsuarios } from "./models/Usuario.js";
 
 const formCategoria = document.getElementById("form-categoria");
@@ -1825,5 +1826,134 @@ if (formTrilha && tituloTrilhaInput && descricaoTrilhaInput && categoriaTrilhaSe
 
     preencherSelectCategoriasTrilha();
     renderizarTrilhas();
+}
+
+const formTrilhaCursos = document.getElementById("form-trilha-cursos");
+const nomeTrilhaSelecionada = document.getElementById("nome-trilha-selecionada");
+const cursoTrilhaSelect = document.getElementById("curso-trilha");
+const ordemCursoTrilhaInput = document.getElementById("ordem-curso-trilha");
+const tabelaTrilhaCursosBody = document.getElementById("tabela-trilha-cursos");
+
+if (formTrilhaCursos && nomeTrilhaSelecionada && cursoTrilhaSelect && ordemCursoTrilhaInput && tabelaTrilhaCursosBody) {
+    const parametrosUrl = new URLSearchParams(window.location.search);
+    const idTrilhaAtual = Number(parametrosUrl.get("idTrilha"));
+
+    function mostrarErroTrilhaCursos(mensagem) {
+        nomeTrilhaSelecionada.className = "fw-semibold text-danger";
+        nomeTrilhaSelecionada.textContent = mensagem;
+        tabelaTrilhaCursosBody.innerHTML = "";
+
+        const linhaErro = document.createElement("tr");
+        const colunaErro = document.createElement("td");
+        colunaErro.colSpan = 2;
+        colunaErro.className = "text-center text-danger";
+        colunaErro.textContent = mensagem;
+        linhaErro.appendChild(colunaErro);
+        tabelaTrilhaCursosBody.appendChild(linhaErro);
+
+        cursoTrilhaSelect.disabled = true;
+        ordemCursoTrilhaInput.disabled = true;
+        const botaoAdicionar = formTrilhaCursos.querySelector("button[type='submit']");
+        if (botaoAdicionar) {
+            botaoAdicionar.disabled = true;
+        }
+    }
+
+    const trilhaAtual = listarTrilhas().find((trilha) => Number(trilha.id) === idTrilhaAtual);
+
+    if (!idTrilhaAtual || !trilhaAtual) {
+        mostrarErroTrilhaCursos("Trilha nao encontrada.");
+    } else {
+        nomeTrilhaSelecionada.textContent = trilhaAtual.titulo;
+
+        function preencherSelectCursosDaTrilha() {
+            cursoTrilhaSelect.innerHTML = "";
+
+            const opcaoPadrao = document.createElement("option");
+            opcaoPadrao.value = "";
+            opcaoPadrao.textContent = "Selecione um curso";
+            cursoTrilhaSelect.appendChild(opcaoPadrao);
+
+            const cursos = listarCursos();
+            cursos.forEach((curso) => {
+                const opcao = document.createElement("option");
+                opcao.value = curso.id;
+                opcao.textContent = curso.titulo;
+                cursoTrilhaSelect.appendChild(opcao);
+            });
+        }
+
+        function buscarNomeCursoTrilha(idCurso) {
+            const curso = listarCursos().find((item) => Number(item.id) === Number(idCurso));
+            return curso ? curso.titulo : "-";
+        }
+
+        function renderizarCursosDaTrilha() {
+            const vinculos = listarTrilhasCursos().filter((item) => Number(item.idTrilha) === idTrilhaAtual);
+            tabelaTrilhaCursosBody.innerHTML = "";
+
+            if (vinculos.length === 0) {
+                const linhaVazia = document.createElement("tr");
+                const colunaVazia = document.createElement("td");
+                colunaVazia.colSpan = 2;
+                colunaVazia.className = "text-center text-muted";
+                colunaVazia.textContent = "Nenhum curso vinculado a esta trilha.";
+                linhaVazia.appendChild(colunaVazia);
+                tabelaTrilhaCursosBody.appendChild(linhaVazia);
+                return;
+            }
+
+            vinculos.forEach((vinculo) => {
+                const linha = document.createElement("tr");
+
+                const colunaCurso = document.createElement("td");
+                colunaCurso.textContent = buscarNomeCursoTrilha(vinculo.idCurso);
+
+                const colunaOrdem = document.createElement("td");
+                colunaOrdem.textContent = vinculo.ordem;
+
+                linha.appendChild(colunaCurso);
+                linha.appendChild(colunaOrdem);
+                tabelaTrilhaCursosBody.appendChild(linha);
+            });
+        }
+
+        formTrilhaCursos.addEventListener("submit", (event) => {
+            event.preventDefault();
+
+            const idCurso = Number(cursoTrilhaSelect.value);
+            const ordem = Number(ordemCursoTrilhaInput.value);
+
+            if (!idCurso) {
+                alert("Selecione um curso.");
+                cursoTrilhaSelect.focus();
+                return;
+            }
+
+            if (!ordem) {
+                alert("Informe a ordem do curso na trilha.");
+                ordemCursoTrilhaInput.focus();
+                return;
+            }
+
+            const cursoJaVinculado = listarTrilhasCursos().some((item) => {
+                return Number(item.idTrilha) === idTrilhaAtual && Number(item.idCurso) === idCurso;
+            });
+
+            if (cursoJaVinculado) {
+                alert("Esse curso ja foi vinculado a esta trilha.");
+                cursoTrilhaSelect.focus();
+                return;
+            }
+
+            cadastrarTrilhaCurso(idTrilhaAtual, idCurso, ordem);
+            renderizarCursosDaTrilha();
+            formTrilhaCursos.reset();
+            cursoTrilhaSelect.focus();
+        });
+
+        preencherSelectCursosDaTrilha();
+        renderizarCursosDaTrilha();
+    }
 }
 
