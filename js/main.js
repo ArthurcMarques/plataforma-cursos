@@ -1054,6 +1054,48 @@ if (
         return curso ? curso.titulo : "-";
     }
 
+    function statusEhConcluido(status) {
+        if (!status) {
+            return false;
+        }
+
+        return status.toLowerCase().includes("concl");
+    }
+
+    function usuarioTemProgressoConcluidoNoCurso(idUsuario, idCurso) {
+        const progressos = listarProgressoAulas();
+        const aulas = listarAulas();
+        const modulos = listarModulos();
+
+        for (let i = 0; i < progressos.length; i += 1) {
+            const progresso = progressos[i];
+
+            if (Number(progresso.idUsuario) !== Number(idUsuario)) {
+                continue;
+            }
+
+            if (!statusEhConcluido(progresso.status)) {
+                continue;
+            }
+
+            const aula = aulas.find((item) => Number(item.id) === Number(progresso.idAula));
+            if (!aula) {
+                continue;
+            }
+
+            const modulo = modulos.find((item) => Number(item.id) === Number(aula.idModulo));
+            if (!modulo) {
+                continue;
+            }
+
+            if (Number(modulo.idCurso) === Number(idCurso)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     function atualizarVisualCertificado(certificado) {
         if (!certificado) {
             nomeUsuarioCertificado.textContent = "Nome do Usuario";
@@ -1129,6 +1171,13 @@ if (
         if (dataEmissao === "") {
             alert("Informe a data de emissao.");
             dataEmissaoInput.focus();
+            return;
+        }
+
+        const possuiProgressoConcluido = usuarioTemProgressoConcluidoNoCurso(idUsuario, idCurso);
+        if (!possuiProgressoConcluido) {
+            alert("Para gerar certificado, registre um progresso concluido do usuario em uma aula desse curso.");
+            usuarioCertificadoSelect.focus();
             return;
         }
 
