@@ -1,5 +1,6 @@
 import { cadastrarAula, listarAulas } from "./models/Aula.js";
 import { cadastrarCategoria, listarCategorias } from "./models/Categoria.js";
+import { cadastrarCertificado, listarCertificados } from "./models/Certificado.js";
 import { atualizarTotalAulasCurso, cadastrarCurso, listarCursos } from "./models/Curso.js";
 import { cadastrarMatricula, listarMatriculas } from "./models/Matricula.js";
 import { cadastrarModulo, listarModulos } from "./models/Modulo.js";
@@ -979,5 +980,180 @@ if (
     preencherSelectUsuariosProgresso();
     preencherSelectAulasProgresso();
     renderizarProgressoAulas();
+}
+
+const formCertificado = document.getElementById("form-certificado");
+const usuarioCertificadoSelect = document.getElementById("usuario-certificado");
+const cursoCertificadoSelect = document.getElementById("curso-certificado");
+const codigoVerificacaoInput = document.getElementById("codigo-verificacao");
+const dataEmissaoInput = document.getElementById("data-emissao");
+const nomeUsuarioCertificado = document.getElementById("nome-usuario-certificado");
+const nomeCursoCertificado = document.getElementById("nome-curso-certificado");
+const dataEmissaoCertificado = document.getElementById("data-emissao-certificado");
+const codigoVerificacaoCertificado = document.getElementById("codigo-verificacao-certificado");
+const tabelaCertificadosBody = document.getElementById("tabela-certificados");
+
+if (
+    formCertificado &&
+    usuarioCertificadoSelect &&
+    cursoCertificadoSelect &&
+    codigoVerificacaoInput &&
+    dataEmissaoInput &&
+    nomeUsuarioCertificado &&
+    nomeCursoCertificado &&
+    dataEmissaoCertificado &&
+    codigoVerificacaoCertificado &&
+    tabelaCertificadosBody
+) {
+    function gerarProximoCodigoCertificado() {
+        const proximoId = listarCertificados().length + 1;
+        return `CERT-${String(proximoId).padStart(3, "0")}`;
+    }
+
+    function preencherSelectUsuariosCertificado() {
+        usuarioCertificadoSelect.innerHTML = "";
+
+        const opcaoPadrao = document.createElement("option");
+        opcaoPadrao.value = "";
+        opcaoPadrao.textContent = "Selecione um usuario";
+        usuarioCertificadoSelect.appendChild(opcaoPadrao);
+
+        const usuarios = listarUsuarios();
+        usuarios.forEach((usuario) => {
+            const opcao = document.createElement("option");
+            opcao.value = usuario.id;
+            opcao.textContent = usuario.nomeCompleto;
+            usuarioCertificadoSelect.appendChild(opcao);
+        });
+    }
+
+    function preencherSelectCursosCertificado() {
+        cursoCertificadoSelect.innerHTML = "";
+
+        const opcaoPadrao = document.createElement("option");
+        opcaoPadrao.value = "";
+        opcaoPadrao.textContent = "Selecione um curso";
+        cursoCertificadoSelect.appendChild(opcaoPadrao);
+
+        const cursos = listarCursos();
+        cursos.forEach((curso) => {
+            const opcao = document.createElement("option");
+            opcao.value = curso.id;
+            opcao.textContent = curso.titulo;
+            cursoCertificadoSelect.appendChild(opcao);
+        });
+    }
+
+    function buscarNomeUsuarioCertificado(idUsuario) {
+        const usuario = listarUsuarios().find((item) => Number(item.id) === Number(idUsuario));
+        return usuario ? usuario.nomeCompleto : "-";
+    }
+
+    function buscarNomeCursoCertificado(idCurso) {
+        const curso = listarCursos().find((item) => Number(item.id) === Number(idCurso));
+        return curso ? curso.titulo : "-";
+    }
+
+    function atualizarVisualCertificado(certificado) {
+        if (!certificado) {
+            nomeUsuarioCertificado.textContent = "Nome do Usuario";
+            nomeCursoCertificado.textContent = "Nome do Curso";
+            dataEmissaoCertificado.textContent = "--/--/----";
+            codigoVerificacaoCertificado.textContent = "---";
+            return;
+        }
+
+        nomeUsuarioCertificado.textContent = buscarNomeUsuarioCertificado(certificado.idUsuario);
+        nomeCursoCertificado.textContent = buscarNomeCursoCertificado(certificado.idCurso);
+        dataEmissaoCertificado.textContent = certificado.dataEmissao;
+        codigoVerificacaoCertificado.textContent = certificado.codigoVerificacao;
+    }
+
+    function renderizarCertificados() {
+        const certificados = listarCertificados();
+        tabelaCertificadosBody.innerHTML = "";
+
+        if (certificados.length === 0) {
+            const linhaVazia = document.createElement("tr");
+            const colunaVazia = document.createElement("td");
+            colunaVazia.colSpan = 4;
+            colunaVazia.className = "text-center text-muted";
+            colunaVazia.textContent = "Nenhum certificado gerado.";
+            linhaVazia.appendChild(colunaVazia);
+            tabelaCertificadosBody.appendChild(linhaVazia);
+            return;
+        }
+
+        certificados.forEach((certificado) => {
+            const linha = document.createElement("tr");
+
+            const colunaUsuario = document.createElement("td");
+            colunaUsuario.textContent = buscarNomeUsuarioCertificado(certificado.idUsuario);
+
+            const colunaCurso = document.createElement("td");
+            colunaCurso.textContent = buscarNomeCursoCertificado(certificado.idCurso);
+
+            const colunaCodigo = document.createElement("td");
+            colunaCodigo.textContent = certificado.codigoVerificacao;
+
+            const colunaData = document.createElement("td");
+            colunaData.textContent = certificado.dataEmissao;
+
+            linha.appendChild(colunaUsuario);
+            linha.appendChild(colunaCurso);
+            linha.appendChild(colunaCodigo);
+            linha.appendChild(colunaData);
+            tabelaCertificadosBody.appendChild(linha);
+        });
+    }
+
+    formCertificado.addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        const idUsuario = Number(usuarioCertificadoSelect.value);
+        const idCurso = Number(cursoCertificadoSelect.value);
+        const dataEmissao = dataEmissaoInput.value;
+
+        if (!idUsuario) {
+            alert("Selecione um usuario.");
+            usuarioCertificadoSelect.focus();
+            return;
+        }
+
+        if (!idCurso) {
+            alert("Selecione um curso.");
+            cursoCertificadoSelect.focus();
+            return;
+        }
+
+        if (dataEmissao === "") {
+            alert("Informe a data de emissao.");
+            dataEmissaoInput.focus();
+            return;
+        }
+
+        const certificadoDuplicado = listarCertificados().some((certificado) => {
+            return Number(certificado.idUsuario) === idUsuario && Number(certificado.idCurso) === idCurso;
+        });
+
+        if (certificadoDuplicado) {
+            alert("Ja existe certificado para esse usuario nesse curso.");
+            usuarioCertificadoSelect.focus();
+            return;
+        }
+
+        const novoCertificado = cadastrarCertificado(idUsuario, idCurso, dataEmissao);
+        atualizarVisualCertificado(novoCertificado);
+        renderizarCertificados();
+        formCertificado.reset();
+        codigoVerificacaoInput.value = gerarProximoCodigoCertificado();
+    });
+
+    const ultimoCertificado = listarCertificados().slice(-1)[0] || null;
+    atualizarVisualCertificado(ultimoCertificado);
+    preencherSelectUsuariosCertificado();
+    preencherSelectCursosCertificado();
+    renderizarCertificados();
+    codigoVerificacaoInput.value = gerarProximoCodigoCertificado();
 }
 
