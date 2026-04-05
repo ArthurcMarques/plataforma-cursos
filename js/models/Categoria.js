@@ -15,7 +15,12 @@ const categorias = carregarListaDoStorage(CHAVE_STORAGE_CATEGORIAS).map((item) =
 });
 
 function gerarIdCategoria() {
-    return categorias.length + 1;
+    if (categorias.length === 0) {
+        return 1;
+    }
+
+    const maiorId = Math.max(...categorias.map((categoria) => Number(categoria.id) || 0));
+    return maiorId + 1;
 }
 
 function cadastrarCategoria(nome, descricao) {
@@ -29,4 +34,35 @@ function listarCategorias() {
     return categorias;
 }
 
-export { Categoria, categorias, gerarIdCategoria, cadastrarCategoria, listarCategorias };
+function atualizarCategoria(id, nome, descricao) {
+    const categoria = categorias.find((item) => Number(item.id) === Number(id));
+    if (!categoria) {
+        return null;
+    }
+
+    categoria.nome = nome;
+    categoria.descricao = descricao;
+    salvarListaNoStorage(CHAVE_STORAGE_CATEGORIAS, categorias);
+    return categoria;
+}
+
+function excluirCategoria(id) {
+    const indice = categorias.findIndex((item) => Number(item.id) === Number(id));
+    if (indice === -1) {
+        return false;
+    }
+
+    categorias.splice(indice, 1);
+    salvarListaNoStorage(CHAVE_STORAGE_CATEGORIAS, categorias);
+    return true;
+}
+
+export {
+    Categoria,
+    categorias,
+    gerarIdCategoria,
+    cadastrarCategoria,
+    listarCategorias,
+    atualizarCategoria,
+    excluirCategoria
+};
