@@ -3,6 +3,7 @@ import { cadastrarCategoria, listarCategorias } from "./models/Categoria.js";
 import { atualizarTotalAulasCurso, cadastrarCurso, listarCursos } from "./models/Curso.js";
 import { cadastrarMatricula, listarMatriculas } from "./models/Matricula.js";
 import { cadastrarModulo, listarModulos } from "./models/Modulo.js";
+import { cadastrarProgressoAula, listarProgressoAulas } from "./models/ProgressoAula.js";
 import { cadastrarUsuario, listarUsuarios } from "./models/Usuario.js";
 
 const formCategoria = document.getElementById("form-categoria");
@@ -829,5 +830,154 @@ if (formMatricula && usuarioMatriculaSelect && cursoMatriculaSelect && tabelaMat
     preencherSelectUsuariosMatricula();
     preencherSelectCursosMatricula();
     renderizarMatriculas();
+}
+
+const formProgresso = document.getElementById("form-progresso");
+const usuarioProgressoSelect = document.getElementById("usuario-progresso");
+const aulaProgressoSelect = document.getElementById("aula-progresso");
+const statusProgressoSelect = document.getElementById("status-progresso");
+const dataConclusaoInput = document.getElementById("data-conclusao");
+const tabelaProgressoBody = document.getElementById("tabela-progresso");
+
+if (
+    formProgresso &&
+    usuarioProgressoSelect &&
+    aulaProgressoSelect &&
+    statusProgressoSelect &&
+    dataConclusaoInput &&
+    tabelaProgressoBody
+) {
+    function preencherSelectUsuariosProgresso() {
+        usuarioProgressoSelect.innerHTML = "";
+
+        const opcaoPadrao = document.createElement("option");
+        opcaoPadrao.value = "";
+        opcaoPadrao.textContent = "Selecione um usuario";
+        usuarioProgressoSelect.appendChild(opcaoPadrao);
+
+        const usuarios = listarUsuarios();
+        usuarios.forEach((usuario) => {
+            const opcao = document.createElement("option");
+            opcao.value = usuario.id;
+            opcao.textContent = usuario.nomeCompleto;
+            usuarioProgressoSelect.appendChild(opcao);
+        });
+    }
+
+    function preencherSelectAulasProgresso() {
+        aulaProgressoSelect.innerHTML = "";
+
+        const opcaoPadrao = document.createElement("option");
+        opcaoPadrao.value = "";
+        opcaoPadrao.textContent = "Selecione uma aula";
+        aulaProgressoSelect.appendChild(opcaoPadrao);
+
+        const aulas = listarAulas();
+        aulas.forEach((aula) => {
+            const opcao = document.createElement("option");
+            opcao.value = aula.id;
+            opcao.textContent = aula.titulo;
+            aulaProgressoSelect.appendChild(opcao);
+        });
+    }
+
+    function buscarNomeUsuarioProgresso(idUsuario) {
+        const usuario = listarUsuarios().find((item) => Number(item.id) === Number(idUsuario));
+        return usuario ? usuario.nomeCompleto : "-";
+    }
+
+    function buscarTituloAulaProgresso(idAula) {
+        const aula = listarAulas().find((item) => Number(item.id) === Number(idAula));
+        return aula ? aula.titulo : "-";
+    }
+
+    function renderizarProgressoAulas() {
+        const progressos = listarProgressoAulas();
+        tabelaProgressoBody.innerHTML = "";
+
+        if (progressos.length === 0) {
+            const linhaVazia = document.createElement("tr");
+            const colunaVazia = document.createElement("td");
+            colunaVazia.colSpan = 4;
+            colunaVazia.className = "text-center text-muted";
+            colunaVazia.textContent = "Nenhum progresso registrado.";
+            linhaVazia.appendChild(colunaVazia);
+            tabelaProgressoBody.appendChild(linhaVazia);
+            return;
+        }
+
+        progressos.forEach((progresso) => {
+            const linha = document.createElement("tr");
+
+            const colunaUsuario = document.createElement("td");
+            colunaUsuario.textContent = buscarNomeUsuarioProgresso(progresso.idUsuario);
+
+            const colunaAula = document.createElement("td");
+            colunaAula.textContent = buscarTituloAulaProgresso(progresso.idAula);
+
+            const colunaStatus = document.createElement("td");
+            colunaStatus.textContent = progresso.status;
+
+            const colunaData = document.createElement("td");
+            colunaData.textContent = progresso.dataConclusao;
+
+            linha.appendChild(colunaUsuario);
+            linha.appendChild(colunaAula);
+            linha.appendChild(colunaStatus);
+            linha.appendChild(colunaData);
+            tabelaProgressoBody.appendChild(linha);
+        });
+    }
+
+    formProgresso.addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        const idUsuario = Number(usuarioProgressoSelect.value);
+        const idAula = Number(aulaProgressoSelect.value);
+        const status = statusProgressoSelect.value;
+        const dataConclusao = dataConclusaoInput.value;
+
+        if (!idUsuario) {
+            alert("Selecione um usuario.");
+            usuarioProgressoSelect.focus();
+            return;
+        }
+
+        if (!idAula) {
+            alert("Selecione uma aula.");
+            aulaProgressoSelect.focus();
+            return;
+        }
+
+        if (status === "") {
+            alert("Selecione o status.");
+            statusProgressoSelect.focus();
+            return;
+        }
+
+        if (dataConclusao === "") {
+            alert("Informe a data.");
+            dataConclusaoInput.focus();
+            return;
+        }
+
+        const progressoDuplicado = listarProgressoAulas().some((progresso) => {
+            return Number(progresso.idUsuario) === idUsuario && Number(progresso.idAula) === idAula;
+        });
+
+        if (progressoDuplicado) {
+            alert("Esse usuario ja registrou progresso nessa aula.");
+            usuarioProgressoSelect.focus();
+            return;
+        }
+
+        cadastrarProgressoAula(idUsuario, idAula, status, dataConclusao);
+        renderizarProgressoAulas();
+        formProgresso.reset();
+    });
+
+    preencherSelectUsuariosProgresso();
+    preencherSelectAulasProgresso();
+    renderizarProgressoAulas();
 }
 
