@@ -5,6 +5,7 @@ import { cadastrarCertificado, listarCertificados } from "./models/Certificado.j
 import { atualizarTotalAulasCurso, cadastrarCurso, listarCursos } from "./models/Curso.js";
 import { cadastrarMatricula, listarMatriculas } from "./models/Matricula.js";
 import { cadastrarModulo, listarModulos } from "./models/Modulo.js";
+import { cadastrarPagamento, listarPagamentos } from "./models/Pagamento.js";
 import { cadastrarPlano, listarPlanos } from "./models/Plano.js";
 import { cadastrarProgressoAula, listarProgressoAulas } from "./models/ProgressoAula.js";
 import { cadastrarUsuario, listarUsuarios } from "./models/Usuario.js";
@@ -1520,5 +1521,171 @@ if (
     preencherSelectUsuariosAssinatura();
     preencherSelectPlanosAssinatura();
     renderizarAssinaturas();
+}
+
+const formPagamento = document.getElementById("form-pagamento");
+const assinaturaPagamentoSelect = document.getElementById("assinatura-pagamento");
+const valorPagoInput = document.getElementById("valor-pago");
+const dataPagamentoInput = document.getElementById("data-pagamento");
+const metodoPagamentoSelect = document.getElementById("metodo-pagamento");
+const idTransacaoInput = document.getElementById("id-transacao");
+const tabelaPagamentosBody = document.getElementById("tabela-pagamentos");
+
+if (
+    formPagamento &&
+    assinaturaPagamentoSelect &&
+    valorPagoInput &&
+    dataPagamentoInput &&
+    metodoPagamentoSelect &&
+    idTransacaoInput &&
+    tabelaPagamentosBody
+) {
+    function buscarNomeUsuarioPagamento(idUsuario) {
+        const usuario = listarUsuarios().find((item) => Number(item.id) === Number(idUsuario));
+        return usuario ? usuario.nomeCompleto : "Usuario";
+    }
+
+    function buscarNomePlanoPagamento(idPlano) {
+        const plano = listarPlanos().find((item) => Number(item.id) === Number(idPlano));
+        return plano ? plano.nome : "Plano";
+    }
+
+    function montarDescricaoAssinatura(assinatura) {
+        if (!assinatura) {
+            return "-";
+        }
+
+        const nomeUsuario = buscarNomeUsuarioPagamento(assinatura.idUsuario);
+        const nomePlano = buscarNomePlanoPagamento(assinatura.idPlano);
+        return `${nomeUsuario} - ${nomePlano}`;
+    }
+
+    function preencherSelectAssinaturasPagamento() {
+        assinaturaPagamentoSelect.innerHTML = "";
+
+        const opcaoPadrao = document.createElement("option");
+        opcaoPadrao.value = "";
+        opcaoPadrao.textContent = "Selecione uma assinatura";
+        assinaturaPagamentoSelect.appendChild(opcaoPadrao);
+
+        const assinaturas = listarAssinaturas();
+        assinaturas.forEach((assinatura) => {
+            const opcao = document.createElement("option");
+            opcao.value = assinatura.id;
+            opcao.textContent = montarDescricaoAssinatura(assinatura);
+            assinaturaPagamentoSelect.appendChild(opcao);
+        });
+    }
+
+    function buscarDescricaoAssinaturaPagamento(idAssinatura) {
+        const assinatura = listarAssinaturas().find((item) => Number(item.id) === Number(idAssinatura));
+        return montarDescricaoAssinatura(assinatura);
+    }
+
+    function renderizarPagamentos() {
+        const pagamentos = listarPagamentos();
+        tabelaPagamentosBody.innerHTML = "";
+
+        if (pagamentos.length === 0) {
+            const linhaVazia = document.createElement("tr");
+            const colunaVazia = document.createElement("td");
+            colunaVazia.colSpan = 5;
+            colunaVazia.className = "text-center text-muted";
+            colunaVazia.textContent = "Nenhum pagamento cadastrado.";
+            linhaVazia.appendChild(colunaVazia);
+            tabelaPagamentosBody.appendChild(linhaVazia);
+            return;
+        }
+
+        pagamentos.forEach((pagamento) => {
+            const linha = document.createElement("tr");
+
+            const colunaAssinatura = document.createElement("td");
+            colunaAssinatura.textContent = buscarDescricaoAssinaturaPagamento(pagamento.idAssinatura);
+
+            const colunaValor = document.createElement("td");
+            colunaValor.textContent = `R$ ${Number(pagamento.valorPago).toFixed(2)}`;
+
+            const colunaData = document.createElement("td");
+            colunaData.textContent = pagamento.dataPagamento;
+
+            const colunaMetodo = document.createElement("td");
+            colunaMetodo.textContent = pagamento.metodoPagamento;
+
+            const colunaTransacao = document.createElement("td");
+            colunaTransacao.textContent = pagamento.idTransacaoGateway;
+
+            linha.appendChild(colunaAssinatura);
+            linha.appendChild(colunaValor);
+            linha.appendChild(colunaData);
+            linha.appendChild(colunaMetodo);
+            linha.appendChild(colunaTransacao);
+            tabelaPagamentosBody.appendChild(linha);
+        });
+    }
+
+    formPagamento.addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        const idAssinatura = Number(assinaturaPagamentoSelect.value);
+        const valorPagoTexto = valorPagoInput.value;
+        const valorPago = Number(valorPagoTexto);
+        const dataPagamento = dataPagamentoInput.value;
+        const metodoPagamento = metodoPagamentoSelect.value;
+        const idTransacaoGateway = idTransacaoInput.value.trim();
+
+        if (!idAssinatura) {
+            alert("Selecione a assinatura.");
+            assinaturaPagamentoSelect.focus();
+            return;
+        }
+
+        if (valorPagoTexto === "") {
+            alert("Informe o valor pago.");
+            valorPagoInput.focus();
+            return;
+        }
+
+        if (Number.isNaN(valorPago) || valorPago < 0) {
+            alert("Informe um valor valido.");
+            valorPagoInput.focus();
+            return;
+        }
+
+        if (dataPagamento === "") {
+            alert("Informe a data do pagamento.");
+            dataPagamentoInput.focus();
+            return;
+        }
+
+        if (metodoPagamento === "") {
+            alert("Selecione o metodo de pagamento.");
+            metodoPagamentoSelect.focus();
+            return;
+        }
+
+        if (idTransacaoGateway === "") {
+            alert("Informe o ID da transacao.");
+            idTransacaoInput.focus();
+            return;
+        }
+
+        const transacaoJaExiste = listarPagamentos().some((pagamento) => {
+            return pagamento.idTransacaoGateway.toLowerCase() === idTransacaoGateway.toLowerCase();
+        });
+
+        if (transacaoJaExiste) {
+            alert("Ja existe pagamento com esse ID de transacao.");
+            idTransacaoInput.focus();
+            return;
+        }
+
+        cadastrarPagamento(idAssinatura, valorPago, dataPagamento, metodoPagamento, idTransacaoGateway);
+        renderizarPagamentos();
+        formPagamento.reset();
+    });
+
+    preencherSelectAssinaturasPagamento();
+    renderizarPagamentos();
 }
 
