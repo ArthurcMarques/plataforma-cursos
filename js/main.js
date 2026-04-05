@@ -442,12 +442,11 @@ if (formModulo && tituloModuloInput && ordemModuloInput && nomeCursoSelecionado 
                 colunaOrdem.textContent = modulo.ordem;
 
                 const colunaAcoes = document.createElement("td");
-                const botaoAulas = document.createElement("button");
-                botaoAulas.type = "button";
-                botaoAulas.className = "btn btn-sm btn-outline-secondary";
-                botaoAulas.textContent = "Gerenciar aulas";
-                botaoAulas.disabled = true;
-                colunaAcoes.appendChild(botaoAulas);
+                const linkAulas = document.createElement("a");
+                linkAulas.className = "btn btn-sm btn-outline-secondary";
+                linkAulas.href = `./aulas.html?idModulo=${modulo.id}`;
+                linkAulas.textContent = "Gerenciar aulas";
+                colunaAcoes.appendChild(linkAulas);
 
                 linha.appendChild(colunaTitulo);
                 linha.appendChild(colunaOrdem);
