@@ -4,6 +4,7 @@ import { cadastrarCertificado, listarCertificados } from "./models/Certificado.j
 import { atualizarTotalAulasCurso, cadastrarCurso, listarCursos } from "./models/Curso.js";
 import { cadastrarMatricula, listarMatriculas } from "./models/Matricula.js";
 import { cadastrarModulo, listarModulos } from "./models/Modulo.js";
+import { cadastrarPlano, listarPlanos } from "./models/Plano.js";
 import { cadastrarProgressoAula, listarProgressoAulas } from "./models/ProgressoAula.js";
 import { cadastrarUsuario, listarUsuarios } from "./models/Usuario.js";
 
@@ -1204,5 +1205,117 @@ if (
     preencherSelectCursosCertificado();
     renderizarCertificados();
     codigoVerificacaoInput.value = gerarProximoCodigoCertificado();
+}
+
+const formPlano = document.getElementById("form-plano");
+const nomePlanoInput = document.getElementById("nome-plano");
+const descricaoPlanoInput = document.getElementById("descricao-plano");
+const precoPlanoInput = document.getElementById("preco-plano");
+const duracaoMesesInput = document.getElementById("duracao-meses");
+const tabelaPlanosBody = document.getElementById("tabela-planos");
+
+if (
+    formPlano &&
+    nomePlanoInput &&
+    descricaoPlanoInput &&
+    precoPlanoInput &&
+    duracaoMesesInput &&
+    tabelaPlanosBody
+) {
+    function renderizarPlanos() {
+        const planos = listarPlanos();
+        tabelaPlanosBody.innerHTML = "";
+
+        if (planos.length === 0) {
+            const linhaVazia = document.createElement("tr");
+            const colunaVazia = document.createElement("td");
+            colunaVazia.colSpan = 4;
+            colunaVazia.className = "text-center text-muted";
+            colunaVazia.textContent = "Nenhum plano cadastrado.";
+            linhaVazia.appendChild(colunaVazia);
+            tabelaPlanosBody.appendChild(linhaVazia);
+            return;
+        }
+
+        planos.forEach((plano) => {
+            const linha = document.createElement("tr");
+
+            const colunaNome = document.createElement("td");
+            colunaNome.textContent = plano.nome;
+
+            const colunaDescricao = document.createElement("td");
+            colunaDescricao.textContent = plano.descricao || "-";
+
+            const colunaPreco = document.createElement("td");
+            colunaPreco.textContent = `R$ ${Number(plano.preco).toFixed(2)}`;
+
+            const colunaDuracao = document.createElement("td");
+            colunaDuracao.textContent = `${plano.duracaoMeses} meses`;
+
+            linha.appendChild(colunaNome);
+            linha.appendChild(colunaDescricao);
+            linha.appendChild(colunaPreco);
+            linha.appendChild(colunaDuracao);
+            tabelaPlanosBody.appendChild(linha);
+        });
+    }
+
+    formPlano.addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        const nome = nomePlanoInput.value.trim();
+        const descricao = descricaoPlanoInput.value.trim();
+        const precoTexto = precoPlanoInput.value;
+        const duracaoTexto = duracaoMesesInput.value;
+        const preco = Number(precoTexto);
+        const duracaoMeses = Number(duracaoTexto);
+
+        if (nome === "") {
+            alert("Informe o nome do plano.");
+            nomePlanoInput.focus();
+            return;
+        }
+
+        if (precoTexto === "") {
+            alert("Informe o preco.");
+            precoPlanoInput.focus();
+            return;
+        }
+
+        if (Number.isNaN(preco) || preco < 0) {
+            alert("Informe um preco valido.");
+            precoPlanoInput.focus();
+            return;
+        }
+
+        if (duracaoTexto === "") {
+            alert("Informe a duracao em meses.");
+            duracaoMesesInput.focus();
+            return;
+        }
+
+        if (Number.isNaN(duracaoMeses) || duracaoMeses <= 0) {
+            alert("Informe uma duracao valida.");
+            duracaoMesesInput.focus();
+            return;
+        }
+
+        const nomeJaExiste = listarPlanos().some((plano) => {
+            return plano.nome.toLowerCase() === nome.toLowerCase();
+        });
+
+        if (nomeJaExiste) {
+            alert("Ja existe um plano com esse nome.");
+            nomePlanoInput.focus();
+            return;
+        }
+
+        cadastrarPlano(nome, descricao, preco, duracaoMeses);
+        renderizarPlanos();
+        formPlano.reset();
+        nomePlanoInput.focus();
+    });
+
+    renderizarPlanos();
 }
 
