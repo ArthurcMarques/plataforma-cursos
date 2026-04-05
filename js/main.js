@@ -1784,12 +1784,11 @@ if (formTrilha && tituloTrilhaInput && descricaoTrilhaInput && categoriaTrilhaSe
 
             const colunaAcoes = document.createElement("td");
             colunaAcoes.className = "text-center";
-            const botaoGerenciar = document.createElement("button");
-            botaoGerenciar.type = "button";
-            botaoGerenciar.className = "btn btn-sm btn-outline-secondary";
-            botaoGerenciar.textContent = "Gerenciar cursos";
-            botaoGerenciar.disabled = true;
-            colunaAcoes.appendChild(botaoGerenciar);
+            const linkGerenciar = document.createElement("a");
+            linkGerenciar.className = "btn btn-sm btn-outline-secondary";
+            linkGerenciar.href = `./trilha-cursos.html?idTrilha=${trilha.id}`;
+            linkGerenciar.textContent = "Gerenciar cursos";
+            colunaAcoes.appendChild(linkGerenciar);
 
             linha.appendChild(colunaTitulo);
             linha.appendChild(colunaCategoria);
