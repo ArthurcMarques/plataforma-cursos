@@ -1,6 +1,7 @@
 import { cadastrarCategoria, listarCategorias } from "./models/Categoria.js";
 import { cadastrarCurso, listarCursos } from "./models/Curso.js";
 import { cadastrarMatricula, listarMatriculas } from "./models/Matricula.js";
+import { cadastrarModulo, listarModulos } from "./models/Modulo.js";
 import { cadastrarUsuario, listarUsuarios } from "./models/Usuario.js";
 
 const formCategoria = document.getElementById("form-categoria");
@@ -376,6 +377,121 @@ if (
     preencherSelectCategorias();
     preencherSelectInstrutores();
     renderizarCursos();
+}
+
+const formModulo = document.getElementById("form-modulo");
+const tituloModuloInput = document.getElementById("titulo-modulo");
+const ordemModuloInput = document.getElementById("ordem-modulo");
+const nomeCursoSelecionado = document.getElementById("nome-curso-selecionado");
+const tabelaModulosBody = document.getElementById("tabela-modulos");
+
+if (formModulo && tituloModuloInput && ordemModuloInput && nomeCursoSelecionado && tabelaModulosBody) {
+    const parametrosUrl = new URLSearchParams(window.location.search);
+    const idCursoAtual = Number(parametrosUrl.get("idCurso"));
+
+    function mostrarErroCurso(mensagem) {
+        nomeCursoSelecionado.className = "fw-semibold text-danger mb-0";
+        nomeCursoSelecionado.textContent = mensagem;
+        tabelaModulosBody.innerHTML = "";
+
+        const linhaErro = document.createElement("tr");
+        const colunaErro = document.createElement("td");
+        colunaErro.colSpan = 3;
+        colunaErro.className = "text-center text-danger";
+        colunaErro.textContent = mensagem;
+        linhaErro.appendChild(colunaErro);
+        tabelaModulosBody.appendChild(linhaErro);
+
+        tituloModuloInput.disabled = true;
+        ordemModuloInput.disabled = true;
+        const botaoCadastrar = formModulo.querySelector("button[type='submit']");
+        if (botaoCadastrar) {
+            botaoCadastrar.disabled = true;
+        }
+    }
+
+    const cursoAtual = listarCursos().find((curso) => Number(curso.id) === idCursoAtual);
+
+    if (!idCursoAtual || !cursoAtual) {
+        mostrarErroCurso("Curso nao encontrado.");
+    } else {
+        nomeCursoSelecionado.textContent = cursoAtual.titulo;
+
+        function renderizarModulosCurso() {
+            const modulosCurso = listarModulos().filter((modulo) => Number(modulo.idCurso) === idCursoAtual);
+            tabelaModulosBody.innerHTML = "";
+
+            if (modulosCurso.length === 0) {
+                const linhaVazia = document.createElement("tr");
+                const colunaVazia = document.createElement("td");
+                colunaVazia.colSpan = 3;
+                colunaVazia.className = "text-center text-muted";
+                colunaVazia.textContent = "Nenhum modulo cadastrado para este curso.";
+                linhaVazia.appendChild(colunaVazia);
+                tabelaModulosBody.appendChild(linhaVazia);
+                return;
+            }
+
+            modulosCurso.forEach((modulo) => {
+                const linha = document.createElement("tr");
+
+                const colunaTitulo = document.createElement("td");
+                colunaTitulo.textContent = modulo.titulo;
+
+                const colunaOrdem = document.createElement("td");
+                colunaOrdem.textContent = modulo.ordem;
+
+                const colunaAcoes = document.createElement("td");
+                const botaoAulas = document.createElement("button");
+                botaoAulas.type = "button";
+                botaoAulas.className = "btn btn-sm btn-outline-secondary";
+                botaoAulas.textContent = "Gerenciar aulas";
+                botaoAulas.disabled = true;
+                colunaAcoes.appendChild(botaoAulas);
+
+                linha.appendChild(colunaTitulo);
+                linha.appendChild(colunaOrdem);
+                linha.appendChild(colunaAcoes);
+                tabelaModulosBody.appendChild(linha);
+            });
+        }
+
+        formModulo.addEventListener("submit", (event) => {
+            event.preventDefault();
+
+            const titulo = tituloModuloInput.value.trim();
+            const ordem = Number(ordemModuloInput.value);
+
+            if (titulo === "") {
+                alert("Informe o titulo do modulo.");
+                tituloModuloInput.focus();
+                return;
+            }
+
+            if (!ordem) {
+                alert("Informe a ordem do modulo.");
+                ordemModuloInput.focus();
+                return;
+            }
+
+            const ordemJaExiste = listarModulos().some((modulo) => {
+                return Number(modulo.idCurso) === idCursoAtual && Number(modulo.ordem) === ordem;
+            });
+
+            if (ordemJaExiste) {
+                alert("Ja existe um modulo com essa ordem neste curso.");
+                ordemModuloInput.focus();
+                return;
+            }
+
+            cadastrarModulo(idCursoAtual, titulo, ordem);
+            renderizarModulosCurso();
+            formModulo.reset();
+            tituloModuloInput.focus();
+        });
+
+        renderizarModulosCurso();
+    }
 }
 
 const formMatricula = document.getElementById("form-matricula");
