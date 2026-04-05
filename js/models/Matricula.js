@@ -17,7 +17,12 @@ const matriculas = carregarListaDoStorage(CHAVE_STORAGE_MATRICULAS).map((item) =
 });
 
 function gerarIdMatricula() {
-    return matriculas.length + 1;
+    if (matriculas.length === 0) {
+        return 1;
+    }
+
+    const maiorId = Math.max(...matriculas.map((matricula) => Number(matricula.id) || 0));
+    return maiorId + 1;
 }
 
 function cadastrarMatricula(idUsuario, idCurso, dataMatricula, dataConclusao = null) {
@@ -31,4 +36,15 @@ function listarMatriculas() {
     return matriculas;
 }
 
-export { Matricula, matriculas, gerarIdMatricula, cadastrarMatricula, listarMatriculas };
+function excluirMatricula(id) {
+    const indice = matriculas.findIndex((item) => Number(item.id) === Number(id));
+    if (indice === -1) {
+        return false;
+    }
+
+    matriculas.splice(indice, 1);
+    salvarListaNoStorage(CHAVE_STORAGE_MATRICULAS, matriculas);
+    return true;
+}
+
+export { Matricula, matriculas, gerarIdMatricula, cadastrarMatricula, listarMatriculas, excluirMatricula };

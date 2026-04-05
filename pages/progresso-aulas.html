@@ -9,48 +9,25 @@
     </head>
     <body class="bg-light">
         <main class="container py-5">
-            <section class="mb-4">
-                <h1 class="mb-2">Progresso de Aulas</h1>
-                <p class="text-muted mb-0">
-                    Registre e visualize a conclus&atilde;o das aulas realizadas pelos usu&aacute;rios.
-                </p>
+            <section class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+                <div>
+                    <h1 class="mb-1">Progresso de Aulas</h1>
+                    <p class="text-muted mb-0">
+                        Registre e visualize a conclus&atilde;o das aulas realizadas pelos usu&aacute;rios.
+                    </p>
+                </div>
+                <button
+                    type="button"
+                    class="btn btn-primary"
+                    id="btn-inserir-progresso"
+                    data-bs-toggle="modal"
+                    data-bs-target="#modal-progresso"
+                >
+                    Inserir
+                </button>
             </section>
 
             <section class="bg-white border rounded-3 p-4 mb-4">
-                <h2 class="h5 mb-3">Registrar Progresso</h2>
-                <form id="form-progresso">
-                    <div class="mb-3">
-                        <label for="usuario-progresso" class="form-label">Usu&aacute;rio</label>
-                        <select class="form-select" id="usuario-progresso" name="usuario">
-                            <option value="">Selecione um usu&aacute;rio</option>
-                        </select>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="aula-progresso" class="form-label">Aula</label>
-                        <select class="form-select" id="aula-progresso" name="aula">
-                            <option value="">Selecione uma aula</option>
-                        </select>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="status-progresso" class="form-label">Status</label>
-                        <select class="form-select" id="status-progresso" name="status">
-                            <option value="">Selecione o status</option>
-                            <option value="Conclu&iacute;do">Conclu&iacute;do</option>
-                        </select>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="data-conclusao" class="form-label">Data de conclus&atilde;o</label>
-                        <input type="date" class="form-control" id="data-conclusao" name="dataConclusao">
-                    </div>
-
-                    <button type="submit" class="btn btn-primary">Registrar progresso</button>
-                </form>
-            </section>
-
-            <section class="bg-white border rounded-3 p-4">
                 <h2 class="h5 mb-3">Lista de Progresso</h2>
                 <div class="table-responsive">
                     <table class="table table-striped table-bordered mb-0">
@@ -60,17 +37,67 @@
                                 <th>Aula</th>
                                 <th>Status</th>
                                 <th>Data</th>
+                                <th>A&ccedil;&otilde;es</th>
                             </tr>
                         </thead>
                         <tbody id="tabela-progresso">
                             <tr>
-                                <td colspan="4" class="text-center text-muted">Nenhum progresso registrado.</td>
+                                <td colspan="5" class="text-center text-muted">Nenhum progresso registrado.</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             </section>
         </main>
+
+        <div class="modal fade" id="modal-progresso" tabindex="-1" aria-labelledby="titulo-modal-progresso" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 class="modal-title fs-5" id="titulo-modal-progresso">Registrar Progresso</h2>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                    </div>
+
+                    <form id="form-progresso">
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="usuario-progresso" class="form-label">Usu&aacute;rio</label>
+                                <select class="form-select" id="usuario-progresso" name="usuario">
+                                    <option value="">Selecione um usu&aacute;rio</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="aula-progresso" class="form-label">Aula</label>
+                                <select class="form-select" id="aula-progresso" name="aula">
+                                    <option value="">Selecione uma aula</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="status-progresso" class="form-label">Status</label>
+                                <select class="form-select" id="status-progresso" name="status">
+                                    <option value="">Selecione o status</option>
+                                    <option value="Conclu&iacute;do">Conclu&iacute;do</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-0">
+                                <label for="data-conclusao" class="form-label">Data de conclus&atilde;o</label>
+                                <input type="date" class="form-control" id="data-conclusao" name="dataConclusao">
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary" id="btn-salvar-progresso">Salvar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
         <script type="module" src="../js/main.js"></script>
     </body>
 </html>

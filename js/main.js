@@ -1,14 +1,14 @@
-import { cadastrarAula, listarAulas } from "./models/Aula.js";
+import { cadastrarAula, excluirAula, listarAulas } from "./models/Aula.js";
 import { cadastrarAvaliacao, listarAvaliacoes } from "./models/Avaliacao.js";
 import { cadastrarAssinatura, listarAssinaturas } from "./models/Assinatura.js";
 import { atualizarCategoria, cadastrarCategoria, excluirCategoria, listarCategorias } from "./models/Categoria.js";
 import { cadastrarCertificado, listarCertificados } from "./models/Certificado.js";
 import { atualizarCurso, atualizarTotalAulasCurso, cadastrarCurso, excluirCurso, listarCursos } from "./models/Curso.js";
-import { cadastrarMatricula, listarMatriculas } from "./models/Matricula.js";
+import { cadastrarMatricula, excluirMatricula, listarMatriculas } from "./models/Matricula.js";
 import { cadastrarModulo, listarModulos } from "./models/Modulo.js";
 import { cadastrarPagamento, listarPagamentos } from "./models/Pagamento.js";
 import { cadastrarPlano, listarPlanos } from "./models/Plano.js";
-import { cadastrarProgressoAula, listarProgressoAulas } from "./models/ProgressoAula.js";
+import { cadastrarProgressoAula, excluirProgressoAula, listarProgressoAulas } from "./models/ProgressoAula.js";
 import { cadastrarTrilha, listarTrilhas } from "./models/Trilha.js";
 import { cadastrarTrilhaCurso, listarTrilhasCursos } from "./models/TrilhaCurso.js";
 import { atualizarUsuario, cadastrarUsuario, excluirUsuario, listarUsuarios } from "./models/Usuario.js";
@@ -896,6 +896,10 @@ const urlConteudoInput = document.getElementById("url-conteudo");
 const duracaoMinutosInput = document.getElementById("duracao-minutos");
 const ordemAulaInput = document.getElementById("ordem-aula");
 const tabelaAulasBody = document.getElementById("tabela-aulas");
+const botaoInserirAula = document.getElementById("btn-inserir-aula");
+const modalAulaElement = document.getElementById("modal-aula");
+const tituloModalAula = document.getElementById("titulo-modal-aula");
+const botaoSalvarAula = document.getElementById("btn-salvar-aula");
 
 if (
     formAula &&
@@ -906,10 +910,26 @@ if (
     urlConteudoInput &&
     duracaoMinutosInput &&
     ordemAulaInput &&
-    tabelaAulasBody
+    tabelaAulasBody &&
+    botaoInserirAula &&
+    modalAulaElement &&
+    tituloModalAula &&
+    botaoSalvarAula
 ) {
+    const modalAula = window.bootstrap ? new window.bootstrap.Modal(modalAulaElement) : null;
     const parametrosUrl = new URLSearchParams(window.location.search);
     const idModuloAtual = Number(parametrosUrl.get("idModulo"));
+
+    function configurarModalInsercaoAula() {
+        formAula.reset();
+        tituloModalAula.textContent = "Nova Aula";
+        botaoSalvarAula.textContent = "Salvar";
+    }
+
+    function abrirModalInsercaoAula() {
+        configurarModalInsercaoAula();
+        tituloAulaInput.focus();
+    }
 
     function mostrarErroModulo(mensagem) {
         nomeModulo.className = "fw-semibold text-danger mb-1";
@@ -935,6 +955,7 @@ if (
         if (botaoCadastrar) {
             botaoCadastrar.disabled = true;
         }
+        botaoInserirAula.disabled = true;
     }
 
     const moduloAtual = listarModulos().find((modulo) => Number(modulo.id) === idModuloAtual);
@@ -980,7 +1001,7 @@ if (
             if (aulasModulo.length === 0) {
                 const linhaVazia = document.createElement("tr");
                 const colunaVazia = document.createElement("td");
-                colunaVazia.colSpan = 4;
+                colunaVazia.colSpan = 5;
                 colunaVazia.className = "text-center text-muted";
                 colunaVazia.textContent = "Nenhuma aula cadastrada para este modulo.";
                 linhaVazia.appendChild(colunaVazia);
@@ -1003,10 +1024,60 @@ if (
                 const colunaOrdem = document.createElement("td");
                 colunaOrdem.textContent = aula.ordem;
 
+                const colunaAcoes = document.createElement("td");
+                colunaAcoes.className = "text-center";
+
+                const dropdown = document.createElement("div");
+                dropdown.className = "dropdown";
+
+                const botaoAcoes = document.createElement("button");
+                botaoAcoes.type = "button";
+                botaoAcoes.className = "btn btn-sm btn-outline-secondary dropdown-toggle";
+                botaoAcoes.setAttribute("data-bs-toggle", "dropdown");
+                botaoAcoes.textContent = "Acoes";
+
+                const menu = document.createElement("ul");
+                menu.className = "dropdown-menu";
+
+                if (aula.urlConteudo) {
+                    const itemAbrir = document.createElement("li");
+                    const linkAbrir = document.createElement("a");
+                    linkAbrir.className = "dropdown-item";
+                    linkAbrir.href = aula.urlConteudo;
+                    linkAbrir.target = "_blank";
+                    linkAbrir.rel = "noopener noreferrer";
+                    linkAbrir.textContent = "Abrir conteudo";
+                    itemAbrir.appendChild(linkAbrir);
+                    menu.appendChild(itemAbrir);
+                }
+
+                const itemExcluir = document.createElement("li");
+                const botaoExcluir = document.createElement("button");
+                botaoExcluir.type = "button";
+                botaoExcluir.className = "dropdown-item text-danger";
+                botaoExcluir.textContent = "Excluir";
+                botaoExcluir.addEventListener("click", () => {
+                    const confirmar = window.confirm("Deseja excluir esta aula?");
+                    if (!confirmar) {
+                        return;
+                    }
+
+                    excluirAula(aula.id);
+                    atualizarTotalAulasDoCursoAtual();
+                    renderizarAulasModulo();
+                });
+                itemExcluir.appendChild(botaoExcluir);
+                menu.appendChild(itemExcluir);
+
+                dropdown.appendChild(botaoAcoes);
+                dropdown.appendChild(menu);
+                colunaAcoes.appendChild(dropdown);
+
                 linha.appendChild(colunaTitulo);
                 linha.appendChild(colunaTipo);
                 linha.appendChild(colunaDuracao);
                 linha.appendChild(colunaOrdem);
+                linha.appendChild(colunaAcoes);
                 tabelaAulasBody.appendChild(linha);
             });
         }
@@ -1057,10 +1128,16 @@ if (
             cadastrarAula(idModuloAtual, titulo, tipoConteudo, urlConteudo, duracaoMinutos, ordem);
             atualizarTotalAulasDoCursoAtual();
             renderizarAulasModulo();
-            formAula.reset();
-            tituloAulaInput.focus();
+            configurarModalInsercaoAula();
+            if (modalAula) {
+                modalAula.hide();
+            }
         });
 
+        botaoInserirAula.addEventListener("click", abrirModalInsercaoAula);
+        modalAulaElement.addEventListener("hidden.bs.modal", configurarModalInsercaoAula);
+
+        configurarModalInsercaoAula();
         renderizarAulasModulo();
     }
 }
@@ -1069,8 +1146,36 @@ const formMatricula = document.getElementById("form-matricula");
 const usuarioMatriculaSelect = document.getElementById("usuario-matricula");
 const cursoMatriculaSelect = document.getElementById("curso-matricula");
 const tabelaMatriculasBody = document.getElementById("tabela-matriculas");
+const botaoInserirMatricula = document.getElementById("btn-inserir-matricula");
+const modalMatriculaElement = document.getElementById("modal-matricula");
+const tituloModalMatricula = document.getElementById("titulo-modal-matricula");
+const botaoSalvarMatricula = document.getElementById("btn-salvar-matricula");
 
-if (formMatricula && usuarioMatriculaSelect && cursoMatriculaSelect && tabelaMatriculasBody) {
+if (
+    formMatricula &&
+    usuarioMatriculaSelect &&
+    cursoMatriculaSelect &&
+    tabelaMatriculasBody &&
+    botaoInserirMatricula &&
+    modalMatriculaElement &&
+    tituloModalMatricula &&
+    botaoSalvarMatricula
+) {
+    const modalMatricula = window.bootstrap ? new window.bootstrap.Modal(modalMatriculaElement) : null;
+
+    function configurarModalInsercaoMatricula() {
+        formMatricula.reset();
+        tituloModalMatricula.textContent = "Nova Matricula";
+        botaoSalvarMatricula.textContent = "Salvar";
+    }
+
+    function abrirModalInsercaoMatricula() {
+        preencherSelectUsuariosMatricula();
+        preencherSelectCursosMatricula();
+        configurarModalInsercaoMatricula();
+        usuarioMatriculaSelect.focus();
+    }
+
     function dataAtualMatricula() {
         const hoje = new Date();
         const ano = hoje.getFullYear();
@@ -1130,7 +1235,7 @@ if (formMatricula && usuarioMatriculaSelect && cursoMatriculaSelect && tabelaMat
         if (matriculas.length === 0) {
             const linhaVazia = document.createElement("tr");
             const colunaVazia = document.createElement("td");
-            colunaVazia.colSpan = 3;
+            colunaVazia.colSpan = 4;
             colunaVazia.className = "text-center text-muted";
             colunaVazia.textContent = "Nenhuma matrÃ­cula cadastrada.";
             linhaVazia.appendChild(colunaVazia);
@@ -1150,9 +1255,46 @@ if (formMatricula && usuarioMatriculaSelect && cursoMatriculaSelect && tabelaMat
             const colunaData = document.createElement("td");
             colunaData.textContent = matricula.dataMatricula;
 
+            const colunaAcoes = document.createElement("td");
+            colunaAcoes.className = "text-center";
+
+            const dropdown = document.createElement("div");
+            dropdown.className = "dropdown";
+
+            const botaoAcoes = document.createElement("button");
+            botaoAcoes.type = "button";
+            botaoAcoes.className = "btn btn-sm btn-outline-secondary dropdown-toggle";
+            botaoAcoes.setAttribute("data-bs-toggle", "dropdown");
+            botaoAcoes.textContent = "Acoes";
+
+            const menu = document.createElement("ul");
+            menu.className = "dropdown-menu";
+
+            const itemExcluir = document.createElement("li");
+            const botaoExcluir = document.createElement("button");
+            botaoExcluir.type = "button";
+            botaoExcluir.className = "dropdown-item text-danger";
+            botaoExcluir.textContent = "Excluir";
+            botaoExcluir.addEventListener("click", () => {
+                const confirmar = window.confirm("Deseja excluir esta matricula?");
+                if (!confirmar) {
+                    return;
+                }
+
+                excluirMatricula(matricula.id);
+                renderizarMatriculas();
+            });
+            itemExcluir.appendChild(botaoExcluir);
+
+            menu.appendChild(itemExcluir);
+            dropdown.appendChild(botaoAcoes);
+            dropdown.appendChild(menu);
+            colunaAcoes.appendChild(dropdown);
+
             linha.appendChild(colunaUsuario);
             linha.appendChild(colunaCurso);
             linha.appendChild(colunaData);
+            linha.appendChild(colunaAcoes);
             tabelaMatriculasBody.appendChild(linha);
         });
     }
@@ -1187,9 +1329,16 @@ if (formMatricula && usuarioMatriculaSelect && cursoMatriculaSelect && tabelaMat
 
         cadastrarMatricula(idUsuario, idCurso, dataAtualMatricula());
         renderizarMatriculas();
-        formMatricula.reset();
+        configurarModalInsercaoMatricula();
+        if (modalMatricula) {
+            modalMatricula.hide();
+        }
     });
 
+    botaoInserirMatricula.addEventListener("click", abrirModalInsercaoMatricula);
+    modalMatriculaElement.addEventListener("hidden.bs.modal", configurarModalInsercaoMatricula);
+
+    configurarModalInsercaoMatricula();
     preencherSelectUsuariosMatricula();
     preencherSelectCursosMatricula();
     renderizarMatriculas();
@@ -1201,6 +1350,10 @@ const aulaProgressoSelect = document.getElementById("aula-progresso");
 const statusProgressoSelect = document.getElementById("status-progresso");
 const dataConclusaoInput = document.getElementById("data-conclusao");
 const tabelaProgressoBody = document.getElementById("tabela-progresso");
+const botaoInserirProgresso = document.getElementById("btn-inserir-progresso");
+const modalProgressoElement = document.getElementById("modal-progresso");
+const tituloModalProgresso = document.getElementById("titulo-modal-progresso");
+const botaoSalvarProgresso = document.getElementById("btn-salvar-progresso");
 
 if (
     formProgresso &&
@@ -1208,8 +1361,27 @@ if (
     aulaProgressoSelect &&
     statusProgressoSelect &&
     dataConclusaoInput &&
-    tabelaProgressoBody
+    tabelaProgressoBody &&
+    botaoInserirProgresso &&
+    modalProgressoElement &&
+    tituloModalProgresso &&
+    botaoSalvarProgresso
 ) {
+    const modalProgresso = window.bootstrap ? new window.bootstrap.Modal(modalProgressoElement) : null;
+
+    function configurarModalInsercaoProgresso() {
+        formProgresso.reset();
+        tituloModalProgresso.textContent = "Registrar Progresso";
+        botaoSalvarProgresso.textContent = "Salvar";
+    }
+
+    function abrirModalInsercaoProgresso() {
+        preencherSelectUsuariosProgresso();
+        preencherSelectAulasProgresso();
+        configurarModalInsercaoProgresso();
+        usuarioProgressoSelect.focus();
+    }
+
     function preencherSelectUsuariosProgresso() {
         usuarioProgressoSelect.innerHTML = "";
 
@@ -1261,7 +1433,7 @@ if (
         if (progressos.length === 0) {
             const linhaVazia = document.createElement("tr");
             const colunaVazia = document.createElement("td");
-            colunaVazia.colSpan = 4;
+            colunaVazia.colSpan = 5;
             colunaVazia.className = "text-center text-muted";
             colunaVazia.textContent = "Nenhum progresso registrado.";
             linhaVazia.appendChild(colunaVazia);
@@ -1284,10 +1456,47 @@ if (
             const colunaData = document.createElement("td");
             colunaData.textContent = progresso.dataConclusao;
 
+            const colunaAcoes = document.createElement("td");
+            colunaAcoes.className = "text-center";
+
+            const dropdown = document.createElement("div");
+            dropdown.className = "dropdown";
+
+            const botaoAcoes = document.createElement("button");
+            botaoAcoes.type = "button";
+            botaoAcoes.className = "btn btn-sm btn-outline-secondary dropdown-toggle";
+            botaoAcoes.setAttribute("data-bs-toggle", "dropdown");
+            botaoAcoes.textContent = "Acoes";
+
+            const menu = document.createElement("ul");
+            menu.className = "dropdown-menu";
+
+            const itemExcluir = document.createElement("li");
+            const botaoExcluir = document.createElement("button");
+            botaoExcluir.type = "button";
+            botaoExcluir.className = "dropdown-item text-danger";
+            botaoExcluir.textContent = "Excluir";
+            botaoExcluir.addEventListener("click", () => {
+                const confirmar = window.confirm("Deseja excluir este progresso?");
+                if (!confirmar) {
+                    return;
+                }
+
+                excluirProgressoAula(progresso.idUsuario, progresso.idAula);
+                renderizarProgressoAulas();
+            });
+            itemExcluir.appendChild(botaoExcluir);
+
+            menu.appendChild(itemExcluir);
+            dropdown.appendChild(botaoAcoes);
+            dropdown.appendChild(menu);
+            colunaAcoes.appendChild(dropdown);
+
             linha.appendChild(colunaUsuario);
             linha.appendChild(colunaAula);
             linha.appendChild(colunaStatus);
             linha.appendChild(colunaData);
+            linha.appendChild(colunaAcoes);
             tabelaProgressoBody.appendChild(linha);
         });
     }
@@ -1336,9 +1545,16 @@ if (
 
         cadastrarProgressoAula(idUsuario, idAula, status, dataConclusao);
         renderizarProgressoAulas();
-        formProgresso.reset();
+        configurarModalInsercaoProgresso();
+        if (modalProgresso) {
+            modalProgresso.hide();
+        }
     });
 
+    botaoInserirProgresso.addEventListener("click", abrirModalInsercaoProgresso);
+    modalProgressoElement.addEventListener("hidden.bs.modal", configurarModalInsercaoProgresso);
+
+    configurarModalInsercaoProgresso();
     preencherSelectUsuariosProgresso();
     preencherSelectAulasProgresso();
     renderizarProgressoAulas();

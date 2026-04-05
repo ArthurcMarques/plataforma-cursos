@@ -26,4 +26,18 @@ function listarProgressoAulas() {
     return progressoAulas;
 }
 
-export { ProgressoAula, progressoAulas, cadastrarProgressoAula, listarProgressoAulas };
+function excluirProgressoAula(idUsuario, idAula) {
+    const indice = progressoAulas.findIndex((item) => {
+        return Number(item.idUsuario) === Number(idUsuario) && Number(item.idAula) === Number(idAula);
+    });
+
+    if (indice === -1) {
+        return false;
+    }
+
+    progressoAulas.splice(indice, 1);
+    salvarListaNoStorage(CHAVE_STORAGE_PROGRESSO_AULAS, progressoAulas);
+    return true;
+}
+
+export { ProgressoAula, progressoAulas, cadastrarProgressoAula, listarProgressoAulas, excluirProgressoAula };

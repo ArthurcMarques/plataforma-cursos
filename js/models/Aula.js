@@ -27,7 +27,12 @@ const aulas = carregarListaDoStorage(CHAVE_STORAGE_AULAS).map((item) => {
 });
 
 function gerarIdAula() {
-    return aulas.length + 1;
+    if (aulas.length === 0) {
+        return 1;
+    }
+
+    const maiorId = Math.max(...aulas.map((aula) => Number(aula.id) || 0));
+    return maiorId + 1;
 }
 
 function cadastrarAula(idModulo, titulo, tipoConteudo, urlConteudo, duracaoMinutos, ordem) {
@@ -49,4 +54,15 @@ function listarAulas() {
     return aulas;
 }
 
-export { Aula, aulas, gerarIdAula, cadastrarAula, listarAulas };
+function excluirAula(id) {
+    const indice = aulas.findIndex((item) => Number(item.id) === Number(id));
+    if (indice === -1) {
+        return false;
+    }
+
+    aulas.splice(indice, 1);
+    salvarListaNoStorage(CHAVE_STORAGE_AULAS, aulas);
+    return true;
+}
+
+export { Aula, aulas, gerarIdAula, cadastrarAula, listarAulas, excluirAula };
