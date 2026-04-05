@@ -17,7 +17,12 @@ const planos = carregarListaDoStorage(CHAVE_STORAGE_PLANOS).map((item) => {
 });
 
 function gerarIdPlano() {
-    return planos.length + 1;
+    if (planos.length === 0) {
+        return 1;
+    }
+
+    const maiorId = Math.max(...planos.map((plano) => Number(plano.id) || 0));
+    return maiorId + 1;
 }
 
 function cadastrarPlano(nome, descricao, preco, duracaoMeses) {
@@ -31,4 +36,15 @@ function listarPlanos() {
     return planos;
 }
 
-export { Plano, planos, gerarIdPlano, cadastrarPlano, listarPlanos };
+function excluirPlano(id) {
+    const indice = planos.findIndex((item) => Number(item.id) === Number(id));
+    if (indice === -1) {
+        return false;
+    }
+
+    planos.splice(indice, 1);
+    salvarListaNoStorage(CHAVE_STORAGE_PLANOS, planos);
+    return true;
+}
+
+export { Plano, planos, gerarIdPlano, cadastrarPlano, listarPlanos, excluirPlano };

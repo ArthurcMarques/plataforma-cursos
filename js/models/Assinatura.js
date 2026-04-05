@@ -17,7 +17,12 @@ const assinaturas = carregarListaDoStorage(CHAVE_STORAGE_ASSINATURAS).map((item)
 });
 
 function gerarIdAssinatura() {
-    return assinaturas.length + 1;
+    if (assinaturas.length === 0) {
+        return 1;
+    }
+
+    const maiorId = Math.max(...assinaturas.map((assinatura) => Number(assinatura.id) || 0));
+    return maiorId + 1;
 }
 
 function cadastrarAssinatura(idUsuario, idPlano, dataInicio, dataFim) {
@@ -31,4 +36,15 @@ function listarAssinaturas() {
     return assinaturas;
 }
 
-export { Assinatura, assinaturas, gerarIdAssinatura, cadastrarAssinatura, listarAssinaturas };
+function excluirAssinatura(id) {
+    const indice = assinaturas.findIndex((item) => Number(item.id) === Number(id));
+    if (indice === -1) {
+        return false;
+    }
+
+    assinaturas.splice(indice, 1);
+    salvarListaNoStorage(CHAVE_STORAGE_ASSINATURAS, assinaturas);
+    return true;
+}
+
+export { Assinatura, assinaturas, gerarIdAssinatura, cadastrarAssinatura, listarAssinaturas, excluirAssinatura };

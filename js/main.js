@@ -1,13 +1,13 @@
 import { cadastrarAula, excluirAula, listarAulas } from "./models/Aula.js";
 import { cadastrarAvaliacao, listarAvaliacoes } from "./models/Avaliacao.js";
-import { cadastrarAssinatura, listarAssinaturas } from "./models/Assinatura.js";
+import { cadastrarAssinatura, excluirAssinatura, listarAssinaturas } from "./models/Assinatura.js";
 import { atualizarCategoria, cadastrarCategoria, excluirCategoria, listarCategorias } from "./models/Categoria.js";
 import { cadastrarCertificado, listarCertificados } from "./models/Certificado.js";
 import { atualizarCurso, atualizarTotalAulasCurso, cadastrarCurso, excluirCurso, listarCursos } from "./models/Curso.js";
 import { cadastrarMatricula, excluirMatricula, listarMatriculas } from "./models/Matricula.js";
 import { cadastrarModulo, listarModulos } from "./models/Modulo.js";
-import { cadastrarPagamento, listarPagamentos } from "./models/Pagamento.js";
-import { cadastrarPlano, listarPlanos } from "./models/Plano.js";
+import { cadastrarPagamento, excluirPagamento, listarPagamentos } from "./models/Pagamento.js";
+import { cadastrarPlano, excluirPlano, listarPlanos } from "./models/Plano.js";
 import { cadastrarProgressoAula, excluirProgressoAula, listarProgressoAulas } from "./models/ProgressoAula.js";
 import { cadastrarTrilha, listarTrilhas } from "./models/Trilha.js";
 import { cadastrarTrilhaCurso, listarTrilhasCursos } from "./models/TrilhaCurso.js";
@@ -1936,6 +1936,10 @@ const descricaoPlanoInput = document.getElementById("descricao-plano");
 const precoPlanoInput = document.getElementById("preco-plano");
 const duracaoMesesInput = document.getElementById("duracao-meses");
 const tabelaPlanosBody = document.getElementById("tabela-planos");
+const botaoInserirPlano = document.getElementById("btn-inserir-plano");
+const modalPlanoElement = document.getElementById("modal-plano");
+const tituloModalPlano = document.getElementById("titulo-modal-plano");
+const botaoSalvarPlano = document.getElementById("btn-salvar-plano");
 
 if (
     formPlano &&
@@ -1943,8 +1947,25 @@ if (
     descricaoPlanoInput &&
     precoPlanoInput &&
     duracaoMesesInput &&
-    tabelaPlanosBody
+    tabelaPlanosBody &&
+    botaoInserirPlano &&
+    modalPlanoElement &&
+    tituloModalPlano &&
+    botaoSalvarPlano
 ) {
+    const modalPlano = window.bootstrap ? new window.bootstrap.Modal(modalPlanoElement) : null;
+
+    function configurarModalInsercaoPlano() {
+        formPlano.reset();
+        tituloModalPlano.textContent = "Novo Plano";
+        botaoSalvarPlano.textContent = "Salvar";
+    }
+
+    function abrirModalInsercaoPlano() {
+        configurarModalInsercaoPlano();
+        nomePlanoInput.focus();
+    }
+
     function renderizarPlanos() {
         const planos = listarPlanos();
         tabelaPlanosBody.innerHTML = "";
@@ -1952,7 +1973,7 @@ if (
         if (planos.length === 0) {
             const linhaVazia = document.createElement("tr");
             const colunaVazia = document.createElement("td");
-            colunaVazia.colSpan = 4;
+            colunaVazia.colSpan = 5;
             colunaVazia.className = "text-center text-muted";
             colunaVazia.textContent = "Nenhum plano cadastrado.";
             linhaVazia.appendChild(colunaVazia);
@@ -1975,10 +1996,47 @@ if (
             const colunaDuracao = document.createElement("td");
             colunaDuracao.textContent = `${plano.duracaoMeses} meses`;
 
+            const colunaAcoes = document.createElement("td");
+            colunaAcoes.className = "text-center";
+
+            const dropdown = document.createElement("div");
+            dropdown.className = "dropdown";
+
+            const botaoAcoes = document.createElement("button");
+            botaoAcoes.type = "button";
+            botaoAcoes.className = "btn btn-sm btn-outline-secondary dropdown-toggle";
+            botaoAcoes.setAttribute("data-bs-toggle", "dropdown");
+            botaoAcoes.textContent = "Acoes";
+
+            const menu = document.createElement("ul");
+            menu.className = "dropdown-menu";
+
+            const itemExcluir = document.createElement("li");
+            const botaoExcluir = document.createElement("button");
+            botaoExcluir.type = "button";
+            botaoExcluir.className = "dropdown-item text-danger";
+            botaoExcluir.textContent = "Excluir";
+            botaoExcluir.addEventListener("click", () => {
+                const confirmar = window.confirm("Deseja excluir este plano?");
+                if (!confirmar) {
+                    return;
+                }
+
+                excluirPlano(plano.id);
+                renderizarPlanos();
+            });
+            itemExcluir.appendChild(botaoExcluir);
+
+            menu.appendChild(itemExcluir);
+            dropdown.appendChild(botaoAcoes);
+            dropdown.appendChild(menu);
+            colunaAcoes.appendChild(dropdown);
+
             linha.appendChild(colunaNome);
             linha.appendChild(colunaDescricao);
             linha.appendChild(colunaPreco);
             linha.appendChild(colunaDuracao);
+            linha.appendChild(colunaAcoes);
             tabelaPlanosBody.appendChild(linha);
         });
     }
@@ -2035,10 +2093,16 @@ if (
 
         cadastrarPlano(nome, descricao, preco, duracaoMeses);
         renderizarPlanos();
-        formPlano.reset();
-        nomePlanoInput.focus();
+        configurarModalInsercaoPlano();
+        if (modalPlano) {
+            modalPlano.hide();
+        }
     });
 
+    botaoInserirPlano.addEventListener("click", abrirModalInsercaoPlano);
+    modalPlanoElement.addEventListener("hidden.bs.modal", configurarModalInsercaoPlano);
+
+    configurarModalInsercaoPlano();
     renderizarPlanos();
 }
 
@@ -2048,6 +2112,10 @@ const planoAssinaturaSelect = document.getElementById("plano-assinatura");
 const dataInicioAssinaturaInput = document.getElementById("data-inicio-assinatura");
 const dataFimAssinaturaInput = document.getElementById("data-fim-assinatura");
 const tabelaAssinaturasBody = document.getElementById("tabela-assinaturas");
+const botaoInserirAssinatura = document.getElementById("btn-inserir-assinatura");
+const modalAssinaturaElement = document.getElementById("modal-assinatura");
+const tituloModalAssinatura = document.getElementById("titulo-modal-assinatura");
+const botaoSalvarAssinatura = document.getElementById("btn-salvar-assinatura");
 
 if (
     formAssinatura &&
@@ -2055,8 +2123,27 @@ if (
     planoAssinaturaSelect &&
     dataInicioAssinaturaInput &&
     dataFimAssinaturaInput &&
-    tabelaAssinaturasBody
+    tabelaAssinaturasBody &&
+    botaoInserirAssinatura &&
+    modalAssinaturaElement &&
+    tituloModalAssinatura &&
+    botaoSalvarAssinatura
 ) {
+    const modalAssinatura = window.bootstrap ? new window.bootstrap.Modal(modalAssinaturaElement) : null;
+
+    function configurarModalInsercaoAssinatura() {
+        formAssinatura.reset();
+        tituloModalAssinatura.textContent = "Nova Assinatura";
+        botaoSalvarAssinatura.textContent = "Salvar";
+    }
+
+    function abrirModalInsercaoAssinatura() {
+        preencherSelectUsuariosAssinatura();
+        preencherSelectPlanosAssinatura();
+        configurarModalInsercaoAssinatura();
+        usuarioAssinaturaSelect.focus();
+    }
+
     function preencherSelectUsuariosAssinatura() {
         usuarioAssinaturaSelect.innerHTML = "";
 
@@ -2148,7 +2235,7 @@ if (
         if (assinaturas.length === 0) {
             const linhaVazia = document.createElement("tr");
             const colunaVazia = document.createElement("td");
-            colunaVazia.colSpan = 4;
+            colunaVazia.colSpan = 5;
             colunaVazia.className = "text-center text-muted";
             colunaVazia.textContent = "Nenhuma assinatura cadastrada.";
             linhaVazia.appendChild(colunaVazia);
@@ -2171,10 +2258,47 @@ if (
             const colunaDataFim = document.createElement("td");
             colunaDataFim.textContent = assinatura.dataFim;
 
+            const colunaAcoes = document.createElement("td");
+            colunaAcoes.className = "text-center";
+
+            const dropdown = document.createElement("div");
+            dropdown.className = "dropdown";
+
+            const botaoAcoes = document.createElement("button");
+            botaoAcoes.type = "button";
+            botaoAcoes.className = "btn btn-sm btn-outline-secondary dropdown-toggle";
+            botaoAcoes.setAttribute("data-bs-toggle", "dropdown");
+            botaoAcoes.textContent = "Acoes";
+
+            const menu = document.createElement("ul");
+            menu.className = "dropdown-menu";
+
+            const itemExcluir = document.createElement("li");
+            const botaoExcluir = document.createElement("button");
+            botaoExcluir.type = "button";
+            botaoExcluir.className = "dropdown-item text-danger";
+            botaoExcluir.textContent = "Excluir";
+            botaoExcluir.addEventListener("click", () => {
+                const confirmar = window.confirm("Deseja excluir esta assinatura?");
+                if (!confirmar) {
+                    return;
+                }
+
+                excluirAssinatura(assinatura.id);
+                renderizarAssinaturas();
+            });
+            itemExcluir.appendChild(botaoExcluir);
+
+            menu.appendChild(itemExcluir);
+            dropdown.appendChild(botaoAcoes);
+            dropdown.appendChild(menu);
+            colunaAcoes.appendChild(dropdown);
+
             linha.appendChild(colunaUsuario);
             linha.appendChild(colunaPlano);
             linha.appendChild(colunaDataInicio);
             linha.appendChild(colunaDataFim);
+            linha.appendChild(colunaAcoes);
             tabelaAssinaturasBody.appendChild(linha);
         });
     }
@@ -2233,12 +2357,19 @@ if (
 
         cadastrarAssinatura(idUsuario, idPlano, dataInicio, dataFim);
         renderizarAssinaturas();
-        formAssinatura.reset();
+        configurarModalInsercaoAssinatura();
+        if (modalAssinatura) {
+            modalAssinatura.hide();
+        }
     });
 
     planoAssinaturaSelect.addEventListener("change", preencherDataFimAutomatica);
     dataInicioAssinaturaInput.addEventListener("change", preencherDataFimAutomatica);
 
+    botaoInserirAssinatura.addEventListener("click", abrirModalInsercaoAssinatura);
+    modalAssinaturaElement.addEventListener("hidden.bs.modal", configurarModalInsercaoAssinatura);
+
+    configurarModalInsercaoAssinatura();
     preencherSelectUsuariosAssinatura();
     preencherSelectPlanosAssinatura();
     renderizarAssinaturas();
@@ -2251,6 +2382,10 @@ const dataPagamentoInput = document.getElementById("data-pagamento");
 const metodoPagamentoSelect = document.getElementById("metodo-pagamento");
 const idTransacaoInput = document.getElementById("id-transacao");
 const tabelaPagamentosBody = document.getElementById("tabela-pagamentos");
+const botaoInserirPagamento = document.getElementById("btn-inserir-pagamento");
+const modalPagamentoElement = document.getElementById("modal-pagamento");
+const tituloModalPagamento = document.getElementById("titulo-modal-pagamento");
+const botaoSalvarPagamento = document.getElementById("btn-salvar-pagamento");
 
 if (
     formPagamento &&
@@ -2259,8 +2394,27 @@ if (
     dataPagamentoInput &&
     metodoPagamentoSelect &&
     idTransacaoInput &&
-    tabelaPagamentosBody
+    tabelaPagamentosBody &&
+    botaoInserirPagamento &&
+    modalPagamentoElement &&
+    tituloModalPagamento &&
+    botaoSalvarPagamento
 ) {
+    const modalPagamento = window.bootstrap ? new window.bootstrap.Modal(modalPagamentoElement) : null;
+
+    function configurarModalInsercaoPagamento() {
+        formPagamento.reset();
+        tituloModalPagamento.textContent = "Novo Pagamento";
+        botaoSalvarPagamento.textContent = "Salvar";
+    }
+
+    function abrirModalInsercaoPagamento() {
+        preencherSelectAssinaturasPagamento();
+        preencherValorPagoAutomatico();
+        configurarModalInsercaoPagamento();
+        assinaturaPagamentoSelect.focus();
+    }
+
     function buscarNomeUsuarioPagamento(idUsuario) {
         const usuario = listarUsuarios().find((item) => Number(item.id) === Number(idUsuario));
         return usuario ? usuario.nomeCompleto : "Usuario";
@@ -2343,7 +2497,7 @@ if (
         if (pagamentos.length === 0) {
             const linhaVazia = document.createElement("tr");
             const colunaVazia = document.createElement("td");
-            colunaVazia.colSpan = 5;
+            colunaVazia.colSpan = 6;
             colunaVazia.className = "text-center text-muted";
             colunaVazia.textContent = "Nenhum pagamento cadastrado.";
             linhaVazia.appendChild(colunaVazia);
@@ -2369,11 +2523,48 @@ if (
             const colunaTransacao = document.createElement("td");
             colunaTransacao.textContent = pagamento.idTransacaoGateway;
 
+            const colunaAcoes = document.createElement("td");
+            colunaAcoes.className = "text-center";
+
+            const dropdown = document.createElement("div");
+            dropdown.className = "dropdown";
+
+            const botaoAcoes = document.createElement("button");
+            botaoAcoes.type = "button";
+            botaoAcoes.className = "btn btn-sm btn-outline-secondary dropdown-toggle";
+            botaoAcoes.setAttribute("data-bs-toggle", "dropdown");
+            botaoAcoes.textContent = "Acoes";
+
+            const menu = document.createElement("ul");
+            menu.className = "dropdown-menu";
+
+            const itemExcluir = document.createElement("li");
+            const botaoExcluir = document.createElement("button");
+            botaoExcluir.type = "button";
+            botaoExcluir.className = "dropdown-item text-danger";
+            botaoExcluir.textContent = "Excluir";
+            botaoExcluir.addEventListener("click", () => {
+                const confirmar = window.confirm("Deseja excluir este pagamento?");
+                if (!confirmar) {
+                    return;
+                }
+
+                excluirPagamento(pagamento.id);
+                renderizarPagamentos();
+            });
+            itemExcluir.appendChild(botaoExcluir);
+
+            menu.appendChild(itemExcluir);
+            dropdown.appendChild(botaoAcoes);
+            dropdown.appendChild(menu);
+            colunaAcoes.appendChild(dropdown);
+
             linha.appendChild(colunaAssinatura);
             linha.appendChild(colunaValor);
             linha.appendChild(colunaData);
             linha.appendChild(colunaMetodo);
             linha.appendChild(colunaTransacao);
+            linha.appendChild(colunaAcoes);
             tabelaPagamentosBody.appendChild(linha);
         });
     }
@@ -2436,11 +2627,18 @@ if (
 
         cadastrarPagamento(idAssinatura, valorPago, dataPagamento, metodoPagamento, idTransacaoGateway);
         renderizarPagamentos();
-        formPagamento.reset();
+        configurarModalInsercaoPagamento();
+        if (modalPagamento) {
+            modalPagamento.hide();
+        }
     });
 
     assinaturaPagamentoSelect.addEventListener("change", preencherValorPagoAutomatico);
 
+    botaoInserirPagamento.addEventListener("click", abrirModalInsercaoPagamento);
+    modalPagamentoElement.addEventListener("hidden.bs.modal", configurarModalInsercaoPagamento);
+
+    configurarModalInsercaoPagamento();
     preencherSelectAssinaturasPagamento();
     preencherValorPagoAutomatico();
     renderizarPagamentos();

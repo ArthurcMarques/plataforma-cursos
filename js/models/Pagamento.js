@@ -25,7 +25,12 @@ const pagamentos = carregarListaDoStorage(CHAVE_STORAGE_PAGAMENTOS).map((item) =
 });
 
 function gerarIdPagamento() {
-    return pagamentos.length + 1;
+    if (pagamentos.length === 0) {
+        return 1;
+    }
+
+    const maiorId = Math.max(...pagamentos.map((pagamento) => Number(pagamento.id) || 0));
+    return maiorId + 1;
 }
 
 function cadastrarPagamento(idAssinatura, valorPago, dataPagamento, metodoPagamento, idTransacaoGateway) {
@@ -47,4 +52,15 @@ function listarPagamentos() {
     return pagamentos;
 }
 
-export { Pagamento, pagamentos, gerarIdPagamento, cadastrarPagamento, listarPagamentos };
+function excluirPagamento(id) {
+    const indice = pagamentos.findIndex((item) => Number(item.id) === Number(id));
+    if (indice === -1) {
+        return false;
+    }
+
+    pagamentos.splice(indice, 1);
+    salvarListaNoStorage(CHAVE_STORAGE_PAGAMENTOS, pagamentos);
+    return true;
+}
+
+export { Pagamento, pagamentos, gerarIdPagamento, cadastrarPagamento, listarPagamentos, excluirPagamento };
