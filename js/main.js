@@ -8,6 +8,7 @@ import { cadastrarModulo, listarModulos } from "./models/Modulo.js";
 import { cadastrarPagamento, listarPagamentos } from "./models/Pagamento.js";
 import { cadastrarPlano, listarPlanos } from "./models/Plano.js";
 import { cadastrarProgressoAula, listarProgressoAulas } from "./models/ProgressoAula.js";
+import { cadastrarTrilha, listarTrilhas } from "./models/Trilha.js";
 import { cadastrarUsuario, listarUsuarios } from "./models/Usuario.js";
 
 const formCategoria = document.getElementById("form-categoria");
@@ -1723,5 +1724,107 @@ if (
     preencherSelectAssinaturasPagamento();
     preencherValorPagoAutomatico();
     renderizarPagamentos();
+}
+
+const formTrilha = document.getElementById("form-trilha");
+const tituloTrilhaInput = document.getElementById("titulo-trilha");
+const descricaoTrilhaInput = document.getElementById("descricao-trilha");
+const categoriaTrilhaSelect = document.getElementById("categoria-trilha");
+const tabelaTrilhasBody = document.getElementById("tabela-trilhas");
+
+if (formTrilha && tituloTrilhaInput && descricaoTrilhaInput && categoriaTrilhaSelect && tabelaTrilhasBody) {
+    function preencherSelectCategoriasTrilha() {
+        categoriaTrilhaSelect.innerHTML = "";
+
+        const opcaoPadrao = document.createElement("option");
+        opcaoPadrao.value = "";
+        opcaoPadrao.textContent = "Selecione uma categoria";
+        categoriaTrilhaSelect.appendChild(opcaoPadrao);
+
+        const categorias = listarCategorias();
+        categorias.forEach((categoria) => {
+            const opcao = document.createElement("option");
+            opcao.value = categoria.id;
+            opcao.textContent = categoria.nome;
+            categoriaTrilhaSelect.appendChild(opcao);
+        });
+    }
+
+    function buscarNomeCategoriaTrilha(idCategoria) {
+        const categoria = listarCategorias().find((item) => Number(item.id) === Number(idCategoria));
+        return categoria ? categoria.nome : "-";
+    }
+
+    function renderizarTrilhas() {
+        const trilhas = listarTrilhas();
+        tabelaTrilhasBody.innerHTML = "";
+
+        if (trilhas.length === 0) {
+            const linhaVazia = document.createElement("tr");
+            const colunaVazia = document.createElement("td");
+            colunaVazia.colSpan = 4;
+            colunaVazia.className = "text-center text-muted";
+            colunaVazia.textContent = "Nenhuma trilha cadastrada.";
+            linhaVazia.appendChild(colunaVazia);
+            tabelaTrilhasBody.appendChild(linhaVazia);
+            return;
+        }
+
+        trilhas.forEach((trilha) => {
+            const linha = document.createElement("tr");
+
+            const colunaTitulo = document.createElement("td");
+            colunaTitulo.textContent = trilha.titulo;
+
+            const colunaCategoria = document.createElement("td");
+            colunaCategoria.textContent = buscarNomeCategoriaTrilha(trilha.idCategoria);
+
+            const colunaDescricao = document.createElement("td");
+            colunaDescricao.textContent = trilha.descricao || "-";
+
+            const colunaAcoes = document.createElement("td");
+            colunaAcoes.className = "text-center";
+            const botaoGerenciar = document.createElement("button");
+            botaoGerenciar.type = "button";
+            botaoGerenciar.className = "btn btn-sm btn-outline-secondary";
+            botaoGerenciar.textContent = "Gerenciar cursos";
+            botaoGerenciar.disabled = true;
+            colunaAcoes.appendChild(botaoGerenciar);
+
+            linha.appendChild(colunaTitulo);
+            linha.appendChild(colunaCategoria);
+            linha.appendChild(colunaDescricao);
+            linha.appendChild(colunaAcoes);
+            tabelaTrilhasBody.appendChild(linha);
+        });
+    }
+
+    formTrilha.addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        const titulo = tituloTrilhaInput.value.trim();
+        const descricao = descricaoTrilhaInput.value.trim();
+        const idCategoria = Number(categoriaTrilhaSelect.value);
+
+        if (titulo === "") {
+            alert("Informe o titulo da trilha.");
+            tituloTrilhaInput.focus();
+            return;
+        }
+
+        if (!idCategoria) {
+            alert("Selecione a categoria da trilha.");
+            categoriaTrilhaSelect.focus();
+            return;
+        }
+
+        cadastrarTrilha(titulo, descricao, idCategoria);
+        renderizarTrilhas();
+        formTrilha.reset();
+        tituloTrilhaInput.focus();
+    });
+
+    preencherSelectCategoriasTrilha();
+    renderizarTrilhas();
 }
 
