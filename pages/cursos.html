@@ -9,58 +9,23 @@
     </head>
     <body class="bg-light">
         <main class="container py-5">
-            <section class="mb-4">
-                <h1 class="mb-2">Cursos</h1>
-                <p class="text-muted mb-0">Cadastre e visualize os cursos dispon&iacute;veis na plataforma.</p>
+            <section class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+                <div>
+                    <h1 class="mb-1">Cursos</h1>
+                    <p class="text-muted mb-0">Cadastre e visualize os cursos dispon&iacute;veis na plataforma.</p>
+                </div>
+                <button
+                    type="button"
+                    class="btn btn-primary"
+                    id="btn-inserir-curso"
+                    data-bs-toggle="modal"
+                    data-bs-target="#modal-curso"
+                >
+                    Inserir
+                </button>
             </section>
 
             <section class="bg-white border rounded-3 p-4 mb-4">
-                <h2 class="h5 mb-3">Novo Curso</h2>
-                <form id="form-curso">
-                    <div class="mb-3">
-                        <label for="titulo-curso" class="form-label">T&iacute;tulo do curso</label>
-                        <input type="text" class="form-control" id="titulo-curso" name="titulo">
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="descricao-curso" class="form-label">Descri&ccedil;&atilde;o</label>
-                        <textarea class="form-control" id="descricao-curso" name="descricao" rows="3"></textarea>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="nivel-curso" class="form-label">N&iacute;vel</label>
-                        <select class="form-select" id="nivel-curso" name="nivel">
-                            <option value="">Selecione o n&iacute;vel</option>
-                            <option value="Iniciante">Iniciante</option>
-                            <option value="Intermedi&aacute;rio">Intermedi&aacute;rio</option>
-                            <option value="Avan&ccedil;ado">Avan&ccedil;ado</option>
-                        </select>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="categoria-curso" class="form-label">Categoria</label>
-                        <select class="form-select" id="categoria-curso" name="categoria">
-                            <option value="">Selecione uma categoria</option>
-                        </select>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="instrutor-curso" class="form-label">Instrutor</label>
-                        <select class="form-select" id="instrutor-curso" name="instrutor">
-                            <option value="">Selecione um instrutor</option>
-                        </select>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="data-publicacao-curso" class="form-label">Data de publica&ccedil;&atilde;o</label>
-                        <input type="date" class="form-control" id="data-publicacao-curso" name="dataPublicacao">
-                    </div>
-
-                    <button type="submit" class="btn btn-primary">Cadastrar</button>
-                </form>
-            </section>
-
-            <section class="bg-white border rounded-3 p-4">
                 <h2 class="h5 mb-3">Lista de Cursos</h2>
                 <div class="table-responsive">
                     <table class="table table-striped table-bordered mb-0">
@@ -83,6 +48,66 @@
                 </div>
             </section>
         </main>
+
+        <div class="modal fade" id="modal-curso" tabindex="-1" aria-labelledby="titulo-modal-curso" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 class="modal-title fs-5" id="titulo-modal-curso">Novo Curso</h2>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                    </div>
+
+                    <form id="form-curso">
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="titulo-curso" class="form-label">T&iacute;tulo do curso</label>
+                                <input type="text" class="form-control" id="titulo-curso" name="titulo">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="descricao-curso" class="form-label">Descri&ccedil;&atilde;o</label>
+                                <textarea class="form-control" id="descricao-curso" name="descricao" rows="3"></textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="nivel-curso" class="form-label">N&iacute;vel</label>
+                                <select class="form-select" id="nivel-curso" name="nivel">
+                                    <option value="">Selecione o n&iacute;vel</option>
+                                    <option value="Iniciante">Iniciante</option>
+                                    <option value="Intermedi&aacute;rio">Intermedi&aacute;rio</option>
+                                    <option value="Avan&ccedil;ado">Avan&ccedil;ado</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="categoria-curso" class="form-label">Categoria</label>
+                                <select class="form-select" id="categoria-curso" name="categoria">
+                                    <option value="">Selecione uma categoria</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="instrutor-curso" class="form-label">Instrutor</label>
+                                <select class="form-select" id="instrutor-curso" name="instrutor">
+                                    <option value="">Selecione um instrutor</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-0">
+                                <label for="data-publicacao-curso" class="form-label">Data de publica&ccedil;&atilde;o</label>
+                                <input type="date" class="form-control" id="data-publicacao-curso" name="dataPublicacao">
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary" id="btn-salvar-curso">Salvar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
         <script type="module" src="../js/main.js"></script>
     </body>

@@ -180,6 +180,10 @@ const emailUsuarioInput = document.getElementById("email-usuario");
 const senhaUsuarioInput = document.getElementById("senha-usuario");
 const dataCadastroUsuarioInput = document.getElementById("data-cadastro-usuario");
 const tabelaUsuariosBody = document.getElementById("tabela-usuarios");
+const botaoInserirUsuario = document.getElementById("btn-inserir-usuario");
+const modalUsuarioElement = document.getElementById("modal-usuario");
+const tituloModalUsuario = document.getElementById("titulo-modal-usuario");
+const botaoSalvarUsuario = document.getElementById("btn-salvar-usuario");
 
 if (
     formUsuario &&
@@ -187,10 +191,14 @@ if (
     emailUsuarioInput &&
     senhaUsuarioInput &&
     dataCadastroUsuarioInput &&
-    tabelaUsuariosBody
+    tabelaUsuariosBody &&
+    botaoInserirUsuario &&
+    modalUsuarioElement &&
+    tituloModalUsuario &&
+    botaoSalvarUsuario
 ) {
     let idUsuarioEmEdicao = null;
-    const botaoSalvarUsuario = formUsuario.querySelector("button[type='submit']");
+    const modalUsuario = window.bootstrap ? new window.bootstrap.Modal(modalUsuarioElement) : null;
 
     function emailValido(email) {
         return /^\S+@\S+\.\S+$/.test(email);
@@ -208,13 +216,21 @@ if (
         dataCadastroUsuarioInput.value = dataAtualFormatoInput();
     }
 
-    function resetarFormularioUsuario() {
+    function configurarModalInsercaoUsuario() {
         idUsuarioEmEdicao = null;
         formUsuario.reset();
         definirDataAtualPadrao();
-        if (botaoSalvarUsuario) {
-            botaoSalvarUsuario.textContent = "Cadastrar";
-        }
+        tituloModalUsuario.textContent = "Novo Usuario";
+        botaoSalvarUsuario.textContent = "Salvar";
+    }
+
+    function abrirModalInsercaoUsuario() {
+        configurarModalInsercaoUsuario();
+        nomeUsuarioInput.focus();
+    }
+
+    function resetarFormularioUsuario() {
+        configurarModalInsercaoUsuario();
     }
 
     function prepararEdicaoUsuario(usuario) {
@@ -223,8 +239,10 @@ if (
         emailUsuarioInput.value = usuario.email;
         senhaUsuarioInput.value = usuario.senha;
         dataCadastroUsuarioInput.value = usuario.dataCadastro;
-        if (botaoSalvarUsuario) {
-            botaoSalvarUsuario.textContent = "Salvar alteracoes";
+        tituloModalUsuario.textContent = "Editar Usuario";
+        botaoSalvarUsuario.textContent = "Salvar alteracoes";
+        if (modalUsuario) {
+            modalUsuario.show();
         }
         nomeUsuarioInput.focus();
     }
@@ -374,8 +392,13 @@ if (
 
         renderizarUsuarios();
         resetarFormularioUsuario();
-        nomeUsuarioInput.focus();
+        if (modalUsuario) {
+            modalUsuario.hide();
+        }
     });
+
+    botaoInserirUsuario.addEventListener("click", abrirModalInsercaoUsuario);
+    modalUsuarioElement.addEventListener("hidden.bs.modal", configurarModalInsercaoUsuario);
 
     resetarFormularioUsuario();
     renderizarUsuarios();
@@ -389,6 +412,10 @@ const categoriaCursoSelect = document.getElementById("categoria-curso");
 const instrutorCursoSelect = document.getElementById("instrutor-curso");
 const dataPublicacaoCursoInput = document.getElementById("data-publicacao-curso");
 const tabelaCursosBody = document.getElementById("tabela-cursos");
+const botaoInserirCurso = document.getElementById("btn-inserir-curso");
+const modalCursoElement = document.getElementById("modal-curso");
+const tituloModalCurso = document.getElementById("titulo-modal-curso");
+const botaoSalvarCurso = document.getElementById("btn-salvar-curso");
 
 if (
     formCurso &&
@@ -398,10 +425,14 @@ if (
     categoriaCursoSelect &&
     instrutorCursoSelect &&
     dataPublicacaoCursoInput &&
-    tabelaCursosBody
+    tabelaCursosBody &&
+    botaoInserirCurso &&
+    modalCursoElement &&
+    tituloModalCurso &&
+    botaoSalvarCurso
 ) {
     let idCursoEmEdicao = null;
-    const botaoSalvarCurso = formCurso.querySelector("button[type='submit']");
+    const modalCurso = window.bootstrap ? new window.bootstrap.Modal(modalCursoElement) : null;
 
     function dataAtualFormatoInputCurso() {
         const hoje = new Date();
@@ -415,16 +446,28 @@ if (
         dataPublicacaoCursoInput.value = dataAtualFormatoInputCurso();
     }
 
-    function resetarFormularioCurso() {
+    function configurarModalInsercaoCurso() {
         idCursoEmEdicao = null;
         formCurso.reset();
         definirDataPublicacaoPadrao();
-        if (botaoSalvarCurso) {
-            botaoSalvarCurso.textContent = "Cadastrar";
-        }
+        tituloModalCurso.textContent = "Novo Curso";
+        botaoSalvarCurso.textContent = "Salvar";
+    }
+
+    function abrirModalInsercaoCurso() {
+        preencherSelectCategorias();
+        preencherSelectInstrutores();
+        configurarModalInsercaoCurso();
+        tituloCursoInput.focus();
+    }
+
+    function resetarFormularioCurso() {
+        configurarModalInsercaoCurso();
     }
 
     function prepararEdicaoCurso(curso) {
+        preencherSelectCategorias();
+        preencherSelectInstrutores();
         idCursoEmEdicao = curso.id;
         tituloCursoInput.value = curso.titulo;
         descricaoCursoInput.value = curso.descricao;
@@ -432,8 +475,10 @@ if (
         categoriaCursoSelect.value = String(curso.idCategoria);
         instrutorCursoSelect.value = String(curso.idInstrutor);
         dataPublicacaoCursoInput.value = curso.dataPublicacao;
-        if (botaoSalvarCurso) {
-            botaoSalvarCurso.textContent = "Salvar alteracoes";
+        tituloModalCurso.textContent = "Editar Curso";
+        botaoSalvarCurso.textContent = "Salvar alteracoes";
+        if (modalCurso) {
+            modalCurso.show();
         }
         tituloCursoInput.focus();
     }
@@ -662,8 +707,13 @@ if (
 
         renderizarCursos();
         resetarFormularioCurso();
-        tituloCursoInput.focus();
+        if (modalCurso) {
+            modalCurso.hide();
+        }
     });
+
+    botaoInserirCurso.addEventListener("click", abrirModalInsercaoCurso);
+    modalCursoElement.addEventListener("hidden.bs.modal", configurarModalInsercaoCurso);
 
     resetarFormularioCurso();
     preencherSelectCategorias();
