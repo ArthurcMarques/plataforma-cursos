@@ -1,3 +1,4 @@
+import { cadastrarAula, listarAulas } from "./models/Aula.js";
 import { cadastrarCategoria, listarCategorias } from "./models/Categoria.js";
 import { cadastrarCurso, listarCursos } from "./models/Curso.js";
 import { cadastrarMatricula, listarMatriculas } from "./models/Matricula.js";
@@ -490,6 +491,159 @@ if (formModulo && tituloModuloInput && ordemModuloInput && nomeCursoSelecionado 
         });
 
         renderizarModulosCurso();
+    }
+}
+
+const formAula = document.getElementById("form-aula");
+const nomeModulo = document.getElementById("nome-modulo");
+const nomeCurso = document.getElementById("nome-curso");
+const tituloAulaInput = document.getElementById("titulo-aula");
+const tipoConteudoSelect = document.getElementById("tipo-conteudo");
+const urlConteudoInput = document.getElementById("url-conteudo");
+const duracaoMinutosInput = document.getElementById("duracao-minutos");
+const ordemAulaInput = document.getElementById("ordem-aula");
+const tabelaAulasBody = document.getElementById("tabela-aulas");
+
+if (
+    formAula &&
+    nomeModulo &&
+    nomeCurso &&
+    tituloAulaInput &&
+    tipoConteudoSelect &&
+    urlConteudoInput &&
+    duracaoMinutosInput &&
+    ordemAulaInput &&
+    tabelaAulasBody
+) {
+    const parametrosUrl = new URLSearchParams(window.location.search);
+    const idModuloAtual = Number(parametrosUrl.get("idModulo"));
+
+    function mostrarErroModulo(mensagem) {
+        nomeModulo.className = "fw-semibold text-danger mb-1";
+        nomeModulo.textContent = mensagem;
+        nomeCurso.textContent = "-";
+        tabelaAulasBody.innerHTML = "";
+
+        const linhaErro = document.createElement("tr");
+        const colunaErro = document.createElement("td");
+        colunaErro.colSpan = 4;
+        colunaErro.className = "text-center text-danger";
+        colunaErro.textContent = mensagem;
+        linhaErro.appendChild(colunaErro);
+        tabelaAulasBody.appendChild(linhaErro);
+
+        tituloAulaInput.disabled = true;
+        tipoConteudoSelect.disabled = true;
+        urlConteudoInput.disabled = true;
+        duracaoMinutosInput.disabled = true;
+        ordemAulaInput.disabled = true;
+
+        const botaoCadastrar = formAula.querySelector("button[type='submit']");
+        if (botaoCadastrar) {
+            botaoCadastrar.disabled = true;
+        }
+    }
+
+    const moduloAtual = listarModulos().find((modulo) => Number(modulo.id) === idModuloAtual);
+
+    if (!idModuloAtual || !moduloAtual) {
+        mostrarErroModulo("Modulo nao encontrado.");
+    } else {
+        nomeModulo.textContent = moduloAtual.titulo;
+
+        const cursoRelacionado = listarCursos().find((curso) => {
+            return Number(curso.id) === Number(moduloAtual.idCurso);
+        });
+        nomeCurso.textContent = cursoRelacionado ? cursoRelacionado.titulo : "Curso nao encontrado.";
+
+        function renderizarAulasModulo() {
+            const aulasModulo = listarAulas().filter((aula) => Number(aula.idModulo) === idModuloAtual);
+            tabelaAulasBody.innerHTML = "";
+
+            if (aulasModulo.length === 0) {
+                const linhaVazia = document.createElement("tr");
+                const colunaVazia = document.createElement("td");
+                colunaVazia.colSpan = 4;
+                colunaVazia.className = "text-center text-muted";
+                colunaVazia.textContent = "Nenhuma aula cadastrada para este modulo.";
+                linhaVazia.appendChild(colunaVazia);
+                tabelaAulasBody.appendChild(linhaVazia);
+                return;
+            }
+
+            aulasModulo.forEach((aula) => {
+                const linha = document.createElement("tr");
+
+                const colunaTitulo = document.createElement("td");
+                colunaTitulo.textContent = aula.titulo;
+
+                const colunaTipo = document.createElement("td");
+                colunaTipo.textContent = aula.tipoConteudo;
+
+                const colunaDuracao = document.createElement("td");
+                colunaDuracao.textContent = `${aula.duracaoMinutos} min`;
+
+                const colunaOrdem = document.createElement("td");
+                colunaOrdem.textContent = aula.ordem;
+
+                linha.appendChild(colunaTitulo);
+                linha.appendChild(colunaTipo);
+                linha.appendChild(colunaDuracao);
+                linha.appendChild(colunaOrdem);
+                tabelaAulasBody.appendChild(linha);
+            });
+        }
+
+        formAula.addEventListener("submit", (event) => {
+            event.preventDefault();
+
+            const titulo = tituloAulaInput.value.trim();
+            const tipoConteudo = tipoConteudoSelect.value;
+            const urlConteudo = urlConteudoInput.value.trim();
+            const duracaoMinutos = Number(duracaoMinutosInput.value);
+            const ordem = Number(ordemAulaInput.value);
+
+            if (titulo === "") {
+                alert("Informe o titulo da aula.");
+                tituloAulaInput.focus();
+                return;
+            }
+
+            if (tipoConteudo === "") {
+                alert("Selecione o tipo de conteudo.");
+                tipoConteudoSelect.focus();
+                return;
+            }
+
+            if (!duracaoMinutos) {
+                alert("Informe a duracao em minutos.");
+                duracaoMinutosInput.focus();
+                return;
+            }
+
+            if (!ordem) {
+                alert("Informe a ordem da aula.");
+                ordemAulaInput.focus();
+                return;
+            }
+
+            const ordemJaExiste = listarAulas().some((aula) => {
+                return Number(aula.idModulo) === idModuloAtual && Number(aula.ordem) === ordem;
+            });
+
+            if (ordemJaExiste) {
+                alert("Ja existe uma aula com essa ordem neste modulo.");
+                ordemAulaInput.focus();
+                return;
+            }
+
+            cadastrarAula(idModuloAtual, titulo, tipoConteudo, urlConteudo, duracaoMinutos, ordem);
+            renderizarAulasModulo();
+            formAula.reset();
+            tituloAulaInput.focus();
+        });
+
+        renderizarAulasModulo();
     }
 }
 
