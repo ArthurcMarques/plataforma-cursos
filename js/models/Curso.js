@@ -1,7 +1,7 @@
 import { carregarListaDoStorage, salvarListaNoStorage } from "../storage/localStorage.js";
 
 class Curso {
-    constructor(id, titulo, descricao, nivel, idCategoria, idInstrutor, dataPublicacao, totalAulas = 0) {
+    constructor(id, titulo, descricao, nivel, idCategoria, idInstrutor, dataPublicacao, totalAulas = 0, totalHoras = 0) {
         this.id = id;
         this.titulo = titulo;
         this.descricao = descricao;
@@ -10,6 +10,7 @@ class Curso {
         this.idInstrutor = idInstrutor;
         this.dataPublicacao = dataPublicacao;
         this.totalAulas = Number(totalAulas) || 0;
+        this.totalHoras = Number(totalHoras) || 0;
     }
 }
 
@@ -24,7 +25,8 @@ const cursos = carregarListaDoStorage(CHAVE_STORAGE_CURSOS).map((item) => {
         item.idCategoria,
         item.idInstrutor,
         item.dataPublicacao,
-        item.totalAulas
+        item.totalAulas,
+        item.totalHoras
     );
 });
 
@@ -46,6 +48,7 @@ function cadastrarCurso(titulo, descricao, nivel, idCategoria, idInstrutor, data
         idCategoria,
         idInstrutor,
         dataPublicacao,
+        0,
         0
     );
     cursos.push(novoCurso);
