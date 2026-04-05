@@ -1,4 +1,5 @@
 import { cadastrarAula, listarAulas } from "./models/Aula.js";
+import { cadastrarAvaliacao, listarAvaliacoes } from "./models/Avaliacao.js";
 import { cadastrarAssinatura, listarAssinaturas } from "./models/Assinatura.js";
 import { atualizarCategoria, cadastrarCategoria, excluirCategoria, listarCategorias } from "./models/Categoria.js";
 import { cadastrarCertificado, listarCertificados } from "./models/Certificado.js";
@@ -1238,6 +1239,152 @@ if (
     preencherSelectUsuariosProgresso();
     preencherSelectAulasProgresso();
     renderizarProgressoAulas();
+}
+
+const formAvaliacao = document.getElementById("form-avaliacao");
+const usuarioAvaliacaoSelect = document.getElementById("usuario-avaliacao");
+const cursoAvaliacaoSelect = document.getElementById("curso-avaliacao");
+const notaAvaliacaoSelect = document.getElementById("nota-avaliacao");
+const comentarioAvaliacaoInput = document.getElementById("comentario-avaliacao");
+const dataAvaliacaoInput = document.getElementById("data-avaliacao");
+const tabelaAvaliacoesBody = document.getElementById("tabela-avaliacoes");
+
+if (
+    formAvaliacao &&
+    usuarioAvaliacaoSelect &&
+    cursoAvaliacaoSelect &&
+    notaAvaliacaoSelect &&
+    comentarioAvaliacaoInput &&
+    dataAvaliacaoInput &&
+    tabelaAvaliacoesBody
+) {
+    function preencherSelectUsuariosAvaliacao() {
+        usuarioAvaliacaoSelect.innerHTML = "";
+
+        const opcaoPadrao = document.createElement("option");
+        opcaoPadrao.value = "";
+        opcaoPadrao.textContent = "Selecione um usuario";
+        usuarioAvaliacaoSelect.appendChild(opcaoPadrao);
+
+        const usuarios = listarUsuarios();
+        usuarios.forEach((usuario) => {
+            const opcao = document.createElement("option");
+            opcao.value = usuario.id;
+            opcao.textContent = usuario.nomeCompleto;
+            usuarioAvaliacaoSelect.appendChild(opcao);
+        });
+    }
+
+    function preencherSelectCursosAvaliacao() {
+        cursoAvaliacaoSelect.innerHTML = "";
+
+        const opcaoPadrao = document.createElement("option");
+        opcaoPadrao.value = "";
+        opcaoPadrao.textContent = "Selecione um curso";
+        cursoAvaliacaoSelect.appendChild(opcaoPadrao);
+
+        const cursos = listarCursos();
+        cursos.forEach((curso) => {
+            const opcao = document.createElement("option");
+            opcao.value = curso.id;
+            opcao.textContent = curso.titulo;
+            cursoAvaliacaoSelect.appendChild(opcao);
+        });
+    }
+
+    function buscarNomeUsuarioAvaliacao(idUsuario) {
+        const usuario = listarUsuarios().find((item) => Number(item.id) === Number(idUsuario));
+        return usuario ? usuario.nomeCompleto : "-";
+    }
+
+    function buscarTituloCursoAvaliacao(idCurso) {
+        const curso = listarCursos().find((item) => Number(item.id) === Number(idCurso));
+        return curso ? curso.titulo : "-";
+    }
+
+    function renderizarAvaliacoes() {
+        const avaliacoes = listarAvaliacoes();
+        tabelaAvaliacoesBody.innerHTML = "";
+
+        if (avaliacoes.length === 0) {
+            const linhaVazia = document.createElement("tr");
+            const colunaVazia = document.createElement("td");
+            colunaVazia.colSpan = 5;
+            colunaVazia.className = "text-center text-muted";
+            colunaVazia.textContent = "Nenhuma avaliacao cadastrada.";
+            linhaVazia.appendChild(colunaVazia);
+            tabelaAvaliacoesBody.appendChild(linhaVazia);
+            return;
+        }
+
+        avaliacoes.forEach((avaliacao) => {
+            const linha = document.createElement("tr");
+
+            const colunaUsuario = document.createElement("td");
+            colunaUsuario.textContent = buscarNomeUsuarioAvaliacao(avaliacao.idUsuario);
+
+            const colunaCurso = document.createElement("td");
+            colunaCurso.textContent = buscarTituloCursoAvaliacao(avaliacao.idCurso);
+
+            const colunaNota = document.createElement("td");
+            colunaNota.textContent = avaliacao.nota;
+
+            const colunaComentario = document.createElement("td");
+            colunaComentario.textContent = avaliacao.comentario || "-";
+
+            const colunaData = document.createElement("td");
+            colunaData.textContent = avaliacao.dataAvaliacao;
+
+            linha.appendChild(colunaUsuario);
+            linha.appendChild(colunaCurso);
+            linha.appendChild(colunaNota);
+            linha.appendChild(colunaComentario);
+            linha.appendChild(colunaData);
+            tabelaAvaliacoesBody.appendChild(linha);
+        });
+    }
+
+    formAvaliacao.addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        const idUsuario = Number(usuarioAvaliacaoSelect.value);
+        const idCurso = Number(cursoAvaliacaoSelect.value);
+        const nota = Number(notaAvaliacaoSelect.value);
+        const comentario = comentarioAvaliacaoInput.value.trim();
+        const dataAvaliacao = dataAvaliacaoInput.value;
+
+        if (!idUsuario) {
+            alert("Selecione o usuario.");
+            usuarioAvaliacaoSelect.focus();
+            return;
+        }
+
+        if (!idCurso) {
+            alert("Selecione o curso.");
+            cursoAvaliacaoSelect.focus();
+            return;
+        }
+
+        if (!nota || nota < 1 || nota > 5) {
+            alert("Selecione uma nota de 1 a 5.");
+            notaAvaliacaoSelect.focus();
+            return;
+        }
+
+        if (dataAvaliacao === "") {
+            alert("Informe a data da avaliacao.");
+            dataAvaliacaoInput.focus();
+            return;
+        }
+
+        cadastrarAvaliacao(idUsuario, idCurso, nota, comentario, dataAvaliacao);
+        renderizarAvaliacoes();
+        formAvaliacao.reset();
+    });
+
+    preencherSelectUsuariosAvaliacao();
+    preencherSelectCursosAvaliacao();
+    renderizarAvaliacoes();
 }
 
 const formCertificado = document.getElementById("form-certificado");
