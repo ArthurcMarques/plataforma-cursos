@@ -1,4 +1,5 @@
 import { cadastrarCategoria, listarCategorias } from "./models/Categoria.js";
+import { cadastrarCurso, listarCursos } from "./models/Curso.js";
 import { cadastrarUsuario, listarUsuarios } from "./models/Usuario.js";
 
 const formCategoria = document.getElementById("form-categoria");
@@ -194,5 +195,177 @@ if (
 
     definirDataAtualPadrao();
     renderizarUsuarios();
+}
+
+const formCurso = document.getElementById("form-curso");
+const tituloCursoInput = document.getElementById("titulo-curso");
+const descricaoCursoInput = document.getElementById("descricao-curso");
+const nivelCursoSelect = document.getElementById("nivel-curso");
+const categoriaCursoSelect = document.getElementById("categoria-curso");
+const instrutorCursoSelect = document.getElementById("instrutor-curso");
+const dataPublicacaoCursoInput = document.getElementById("data-publicacao-curso");
+const tabelaCursosBody = document.getElementById("tabela-cursos");
+
+if (
+    formCurso &&
+    tituloCursoInput &&
+    descricaoCursoInput &&
+    nivelCursoSelect &&
+    categoriaCursoSelect &&
+    instrutorCursoSelect &&
+    dataPublicacaoCursoInput &&
+    tabelaCursosBody
+) {
+    function dataAtualFormatoInputCurso() {
+        const hoje = new Date();
+        const ano = hoje.getFullYear();
+        const mes = String(hoje.getMonth() + 1).padStart(2, "0");
+        const dia = String(hoje.getDate()).padStart(2, "0");
+        return `${ano}-${mes}-${dia}`;
+    }
+
+    function definirDataPublicacaoPadrao() {
+        dataPublicacaoCursoInput.value = dataAtualFormatoInputCurso();
+    }
+
+    function preencherSelectCategorias() {
+        categoriaCursoSelect.innerHTML = "";
+
+        const opcaoPadrao = document.createElement("option");
+        opcaoPadrao.value = "";
+        opcaoPadrao.textContent = "Selecione uma categoria";
+        categoriaCursoSelect.appendChild(opcaoPadrao);
+
+        const categorias = listarCategorias();
+        categorias.forEach((categoria) => {
+            const opcao = document.createElement("option");
+            opcao.value = categoria.id;
+            opcao.textContent = categoria.nome;
+            categoriaCursoSelect.appendChild(opcao);
+        });
+    }
+
+    function preencherSelectInstrutores() {
+        instrutorCursoSelect.innerHTML = "";
+
+        const opcaoPadrao = document.createElement("option");
+        opcaoPadrao.value = "";
+        opcaoPadrao.textContent = "Selecione um instrutor";
+        instrutorCursoSelect.appendChild(opcaoPadrao);
+
+        const usuarios = listarUsuarios();
+        usuarios.forEach((usuario) => {
+            const opcao = document.createElement("option");
+            opcao.value = usuario.id;
+            opcao.textContent = usuario.nomeCompleto;
+            instrutorCursoSelect.appendChild(opcao);
+        });
+    }
+
+    function buscarNomeCategoria(idCategoria) {
+        const categoria = listarCategorias().find((item) => item.id === idCategoria);
+        return categoria ? categoria.nome : "-";
+    }
+
+    function buscarNomeInstrutor(idInstrutor) {
+        const instrutor = listarUsuarios().find((item) => item.id === idInstrutor);
+        return instrutor ? instrutor.nomeCompleto : "-";
+    }
+
+    function renderizarCursos() {
+        const cursos = listarCursos();
+        tabelaCursosBody.innerHTML = "";
+
+        if (cursos.length === 0) {
+            const linhaVazia = document.createElement("tr");
+            const colunaVazia = document.createElement("td");
+            colunaVazia.colSpan = 4;
+            colunaVazia.className = "text-center text-muted";
+            colunaVazia.textContent = "Nenhum curso cadastrado.";
+            linhaVazia.appendChild(colunaVazia);
+            tabelaCursosBody.appendChild(linhaVazia);
+            return;
+        }
+
+        cursos.forEach((curso) => {
+            const linha = document.createElement("tr");
+
+            const colunaTitulo = document.createElement("td");
+            colunaTitulo.textContent = curso.titulo;
+
+            const colunaCategoria = document.createElement("td");
+            colunaCategoria.textContent = buscarNomeCategoria(curso.idCategoria);
+
+            const colunaInstrutor = document.createElement("td");
+            colunaInstrutor.textContent = buscarNomeInstrutor(curso.idInstrutor);
+
+            const colunaNivel = document.createElement("td");
+            colunaNivel.textContent = curso.nivel;
+
+            linha.appendChild(colunaTitulo);
+            linha.appendChild(colunaCategoria);
+            linha.appendChild(colunaInstrutor);
+            linha.appendChild(colunaNivel);
+            tabelaCursosBody.appendChild(linha);
+        });
+    }
+
+    formCurso.addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        const titulo = tituloCursoInput.value.trim();
+        const descricao = descricaoCursoInput.value.trim();
+        const nivel = nivelCursoSelect.value;
+        const idCategoria = Number(categoriaCursoSelect.value);
+        const idInstrutor = Number(instrutorCursoSelect.value);
+        const dataPublicacao = dataPublicacaoCursoInput.value;
+
+        if (titulo === "") {
+            alert("Informe o titulo do curso.");
+            tituloCursoInput.focus();
+            return;
+        }
+
+        if (descricao === "") {
+            alert("Informe a descricao do curso.");
+            descricaoCursoInput.focus();
+            return;
+        }
+
+        if (nivel === "") {
+            alert("Selecione o nivel do curso.");
+            nivelCursoSelect.focus();
+            return;
+        }
+
+        if (!idCategoria) {
+            alert("Selecione a categoria do curso.");
+            categoriaCursoSelect.focus();
+            return;
+        }
+
+        if (!idInstrutor) {
+            alert("Selecione o instrutor do curso.");
+            instrutorCursoSelect.focus();
+            return;
+        }
+
+        if (dataPublicacao === "") {
+            alert("Informe a data de publicacao.");
+            dataPublicacaoCursoInput.focus();
+            return;
+        }
+
+        cadastrarCurso(titulo, descricao, nivel, idCategoria, idInstrutor, dataPublicacao);
+        renderizarCursos();
+        formCurso.reset();
+        definirDataPublicacaoPadrao();
+        tituloCursoInput.focus();
+    });
+
+    definirDataPublicacaoPadrao();
+    preencherSelectCategorias();
+    preencherSelectInstrutores();
+    renderizarCursos();
 }
 
