@@ -1582,6 +1582,39 @@ if (
         return montarDescricaoAssinatura(assinatura);
     }
 
+    function buscarPrecoPlanoDaAssinatura(idAssinatura) {
+        const assinatura = listarAssinaturas().find((item) => Number(item.id) === Number(idAssinatura));
+        if (!assinatura) {
+            return null;
+        }
+
+        const plano = listarPlanos().find((item) => Number(item.id) === Number(assinatura.idPlano));
+        if (!plano) {
+            return null;
+        }
+
+        const preco = Number(plano.preco);
+        if (Number.isNaN(preco)) {
+            return null;
+        }
+
+        return preco;
+    }
+
+    function preencherValorPagoAutomatico() {
+        const idAssinatura = Number(assinaturaPagamentoSelect.value);
+
+        if (!idAssinatura) {
+            valorPagoInput.value = "";
+            return;
+        }
+
+        const precoPlano = buscarPrecoPlanoDaAssinatura(idAssinatura);
+        if (precoPlano !== null) {
+            valorPagoInput.value = precoPlano.toFixed(2);
+        }
+    }
+
     function renderizarPagamentos() {
         const pagamentos = listarPagamentos();
         tabelaPagamentosBody.innerHTML = "";
@@ -1685,7 +1718,10 @@ if (
         formPagamento.reset();
     });
 
+    assinaturaPagamentoSelect.addEventListener("change", preencherValorPagoAutomatico);
+
     preencherSelectAssinaturasPagamento();
+    preencherValorPagoAutomatico();
     renderizarPagamentos();
 }
 
