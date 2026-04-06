@@ -199,7 +199,7 @@ if (
             return;
         }
 
-        cadastrarMatricula(idUsuario, idCurso, dataAtualMatricula());
+        cadastrarMatricula(idUsuario, idCurso, dataAtualMatricula());`r`n        window.showAppAlert("Matricula cadastrada com sucesso.", "success");
         renderizarMatriculas();
         configurarModalInsercaoMatricula();
         if (modalMatricula) {
@@ -415,7 +415,7 @@ if (
             return;
         }
 
-        cadastrarProgressoAula(idUsuario, idAula, status, dataConclusao);
+        cadastrarProgressoAula(idUsuario, idAula, status, dataConclusao);`r`n        window.showAppAlert("Progresso registrado com sucesso.", "success");
         renderizarProgressoAulas();
         configurarModalInsercaoProgresso();
         if (modalProgresso) {
@@ -637,7 +637,7 @@ if (
             return;
         }
 
-        cadastrarAvaliacao(idUsuario, idCurso, nota, comentario, dataAvaliacao);
+        cadastrarAvaliacao(idUsuario, idCurso, nota, comentario, dataAvaliacao);`r`n        window.showAppAlert("Avaliacao cadastrada com sucesso.", "success");
         renderizarAvaliacoes();
         configurarModalInsercaoAvaliacao();
         if (modalAvaliacao) {
@@ -953,7 +953,7 @@ if (
             return;
         }
 
-        const novoCertificado = cadastrarCertificado(idUsuario, idCurso, dataEmissao);
+        const novoCertificado = cadastrarCertificado(idUsuario, idCurso, dataEmissao);`r`n        window.showAppAlert("Certificado gerado com sucesso.", "success");
         atualizarVisualCertificado(novoCertificado);
         renderizarCertificados();
         configurarModalInsercaoCertificado();
@@ -972,5 +972,9 @@ if (
     renderizarCertificados();
     configurarModalInsercaoCertificado();
 }
+
+
+
+
 
 

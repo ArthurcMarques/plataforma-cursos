@@ -175,7 +175,7 @@ if (
             return;
         }
 
-        cadastrarPlano(nome, descricao, preco, duracaoMeses);
+        cadastrarPlano(nome, descricao, preco, duracaoMeses);`r`n        window.showAppAlert("Plano cadastrado com sucesso.", "success");
         renderizarPlanos();
         configurarModalInsercaoPlano();
         if (modalPlano) {
@@ -439,7 +439,7 @@ if (
             return;
         }
 
-        cadastrarAssinatura(idUsuario, idPlano, dataInicio, dataFim);
+        cadastrarAssinatura(idUsuario, idPlano, dataInicio, dataFim);`r`n        window.showAppAlert("Assinatura registrada com sucesso.", "success");
         renderizarAssinaturas();
         configurarModalInsercaoAssinatura();
         if (modalAssinatura) {
@@ -736,7 +736,7 @@ if (
             return;
         }
 
-        cadastrarPagamento(idAssinatura, valorPago, dataPagamento, metodoPagamento, idTransacaoGateway);
+        cadastrarPagamento(idAssinatura, valorPago, dataPagamento, metodoPagamento, idTransacaoGateway);`r`n        window.showAppAlert("Pagamento registrado com sucesso.", "success");
         renderizarPagamentos();
         configurarModalInsercaoPagamento();
         if (modalPagamento) {
@@ -759,5 +759,8 @@ if (
     preencherValorPagoAutomatico();
     renderizarPagamentos();
 }
+
+
+
 
 

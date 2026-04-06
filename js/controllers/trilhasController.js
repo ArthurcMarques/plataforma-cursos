@@ -151,7 +151,7 @@ if (
             return;
         }
 
-        cadastrarTrilha(titulo, descricao, idCategoria);
+        cadastrarTrilha(titulo, descricao, idCategoria);`r`n        window.showAppAlert("Trilha cadastrada com sucesso.", "success");
         renderizarTrilhas();
         configurarModalInsercaoTrilha();
         if (modalTrilha) {
@@ -350,7 +350,7 @@ if (
                 return;
             }
 
-            cadastrarTrilhaCurso(idTrilhaAtual, idCurso, ordem);
+            cadastrarTrilhaCurso(idTrilhaAtual, idCurso, ordem);`r`n            window.showAppAlert("Curso adicionado a trilha com sucesso.", "success");
             renderizarCursosDaTrilha();
             configurarModalInsercaoTrilhaCurso();
             if (modalTrilhaCurso) {
@@ -366,6 +366,8 @@ if (
         renderizarCursosDaTrilha();
     }
 }
+
+
 
 
 

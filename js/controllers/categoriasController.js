@@ -157,7 +157,7 @@ if (
         }
 
         if (idCategoriaEmEdicao === null) {
-            cadastrarCategoria(nome, descricao);
+            cadastrarCategoria(nome, descricao);`r`n            window.showAppAlert("Categoria cadastrada com sucesso.", "success");
         } else {
             atualizarCategoria(idCategoriaEmEdicao, nome, descricao);
         }
@@ -174,5 +174,6 @@ if (
 
     renderizarCategorias();
 }
+
 
 

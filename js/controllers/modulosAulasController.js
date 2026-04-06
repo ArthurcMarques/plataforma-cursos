@@ -165,7 +165,7 @@ if (
                 return;
             }
 
-            cadastrarModulo(idCursoAtual, titulo, ordem);
+            cadastrarModulo(idCursoAtual, titulo, ordem);`r`n            window.showAppAlert("Modulo cadastrado com sucesso.", "success");
             renderizarModulosCurso();
             configurarModalInsercaoModulo();
             if (modalModulo) {
@@ -422,7 +422,7 @@ if (
                 return;
             }
 
-            cadastrarAula(idModuloAtual, titulo, tipoConteudo, urlConteudo, duracaoMinutos, ordem);
+            cadastrarAula(idModuloAtual, titulo, tipoConteudo, urlConteudo, duracaoMinutos, ordem);`r`n            window.showAppAlert("Aula cadastrada com sucesso.", "success");
             atualizarTotalAulasDoCursoAtual();
             renderizarAulasModulo();
             configurarModalInsercaoAula();
@@ -438,5 +438,7 @@ if (
         renderizarAulasModulo();
     }
 }
+
+
 
 

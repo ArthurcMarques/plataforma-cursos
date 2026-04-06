@@ -351,7 +351,7 @@ if (
         }
 
         if (idCursoEmEdicao === null) {
-            cadastrarCurso(titulo, descricao, nivel, idCategoria, idInstrutor, dataPublicacao);
+            cadastrarCurso(titulo, descricao, nivel, idCategoria, idInstrutor, dataPublicacao);`r`n            window.showAppAlert("Curso cadastrado com sucesso.", "success");
         } else {
             atualizarCurso(idCursoEmEdicao, titulo, descricao, nivel, idCategoria, idInstrutor, dataPublicacao);
         }
@@ -373,4 +373,5 @@ if (
     preencherSelectInstrutores();
     renderizarCursos();
 }
+
 

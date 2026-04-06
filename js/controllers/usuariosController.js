@@ -240,7 +240,7 @@ if (
         }
 
         if (idUsuarioEmEdicao === null) {
-            cadastrarUsuario(nomeCompleto, email, senha, dataCadastro, tipoUsuario);
+            cadastrarUsuario(nomeCompleto, email, senha, dataCadastro, tipoUsuario);`r`n            window.showAppAlert("Usuario cadastrado com sucesso.", "success");
         } else {
             atualizarUsuario(idUsuarioEmEdicao, nomeCompleto, email, senha, dataCadastro, tipoUsuario);
         }
@@ -258,5 +258,6 @@ if (
     resetarFormularioUsuario();
     renderizarUsuarios();
 }
+
 
 
