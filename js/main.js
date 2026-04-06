@@ -2591,6 +2591,7 @@ if (
 }
 
 const formPagamento = document.getElementById("form-pagamento");
+const usuarioCheckoutPagamentoSelect = document.getElementById("usuario-checkout-pagamento");
 const assinaturaPagamentoSelect = document.getElementById("assinatura-pagamento");
 const valorPagoInput = document.getElementById("valor-pago");
 const dataPagamentoInput = document.getElementById("data-pagamento");
@@ -2604,6 +2605,7 @@ const botaoSalvarPagamento = document.getElementById("btn-salvar-pagamento");
 
 if (
     formPagamento &&
+    usuarioCheckoutPagamentoSelect &&
     assinaturaPagamentoSelect &&
     valorPagoInput &&
     dataPagamentoInput &&
@@ -2624,10 +2626,11 @@ if (
     }
 
     function abrirModalInsercaoPagamento() {
+        preencherSelectUsuariosCheckoutPagamento();
         preencherSelectAssinaturasPagamento();
         preencherValorPagoAutomatico();
         configurarModalInsercaoPagamento();
-        assinaturaPagamentoSelect.focus();
+        usuarioCheckoutPagamentoSelect.focus();
     }
 
     function buscarNomeUsuarioPagamento(idUsuario) {
@@ -2651,6 +2654,7 @@ if (
     }
 
     function preencherSelectAssinaturasPagamento() {
+        const idUsuarioSelecionado = Number(usuarioCheckoutPagamentoSelect.value);
         assinaturaPagamentoSelect.innerHTML = "";
 
         const opcaoPadrao = document.createElement("option");
@@ -2658,12 +2662,35 @@ if (
         opcaoPadrao.textContent = "Selecione uma assinatura";
         assinaturaPagamentoSelect.appendChild(opcaoPadrao);
 
-        const assinaturas = listarAssinaturas();
+        const assinaturas = listarAssinaturas().filter((assinatura) => {
+            if (!idUsuarioSelecionado) {
+                return true;
+            }
+
+            return Number(assinatura.idUsuario) === idUsuarioSelecionado;
+        });
         assinaturas.forEach((assinatura) => {
             const opcao = document.createElement("option");
             opcao.value = assinatura.id;
             opcao.textContent = montarDescricaoAssinatura(assinatura);
             assinaturaPagamentoSelect.appendChild(opcao);
+        });
+    }
+
+    function preencherSelectUsuariosCheckoutPagamento() {
+        usuarioCheckoutPagamentoSelect.innerHTML = "";
+
+        const opcaoTodos = document.createElement("option");
+        opcaoTodos.value = "";
+        opcaoTodos.textContent = "Todos os usuários";
+        usuarioCheckoutPagamentoSelect.appendChild(opcaoTodos);
+
+        const usuarios = listarUsuarios();
+        usuarios.forEach((usuario) => {
+            const opcao = document.createElement("option");
+            opcao.value = usuario.id;
+            opcao.textContent = usuario.nomeCompleto;
+            usuarioCheckoutPagamentoSelect.appendChild(opcao);
         });
     }
 
@@ -2849,11 +2876,16 @@ if (
     });
 
     assinaturaPagamentoSelect.addEventListener("change", preencherValorPagoAutomatico);
+    usuarioCheckoutPagamentoSelect.addEventListener("change", () => {
+        preencherSelectAssinaturasPagamento();
+        preencherValorPagoAutomatico();
+    });
 
     botaoInserirPagamento.addEventListener("click", abrirModalInsercaoPagamento);
     modalPagamentoElement.addEventListener("hidden.bs.modal", configurarModalInsercaoPagamento);
 
     configurarModalInsercaoPagamento();
+    preencherSelectUsuariosCheckoutPagamento();
     preencherSelectAssinaturasPagamento();
     preencherValorPagoAutomatico();
     renderizarPagamentos();
