@@ -38,7 +38,8 @@ if (
     const modalTrilha = window.bootstrap ? new window.bootstrap.Modal(modalTrilhaElement) : null;
 
     function configurarModalInsercaoTrilha() {
-        formTrilha.reset();`r`n        window.aplicarDataPadraoHoje(formTrilha);
+        formTrilha.reset();
+        window.aplicarDataPadraoHoje(formTrilha);
         tituloModalTrilha.textContent = "Nova Trilha";
         botaoSalvarTrilha.textContent = "Salvar";
     }
@@ -151,11 +152,17 @@ if (
             return;
         }
 
-        cadastrarTrilha(titulo, descricao, idCategoria);`r`n        window.showAppAlert("Trilha cadastrada com sucesso.", "success");
+        const novaTrilha = cadastrarTrilha(titulo, descricao, idCategoria);
+        window.showAppAlert("Trilha cadastrada com sucesso.", "success");
         renderizarTrilhas();
         configurarModalInsercaoTrilha();
         if (modalTrilha) {
             modalTrilha.hide();
+        }
+
+        const irParaCursosDaTrilha = window.confirm("Deseja adicionar cursos nesta trilha agora?");
+        if (irParaCursosDaTrilha) {
+            window.location.href = `./trilha-cursos.html?idTrilha=${novaTrilha.id}`;
         }
     });
 
@@ -193,7 +200,8 @@ if (
     const idTrilhaAtual = Number(parametrosUrl.get("idTrilha"));
 
     function configurarModalInsercaoTrilhaCurso() {
-        formTrilhaCursos.reset();`r`n        window.aplicarDataPadraoHoje(formTrilhaCursos);
+        formTrilhaCursos.reset();
+        window.aplicarDataPadraoHoje(formTrilhaCursos);
         tituloModalTrilhaCurso.textContent = "Adicionar Curso";
         botaoSalvarTrilhaCurso.textContent = "Salvar";
     }
@@ -350,7 +358,8 @@ if (
                 return;
             }
 
-            cadastrarTrilhaCurso(idTrilhaAtual, idCurso, ordem);`r`n            window.showAppAlert("Curso adicionado a trilha com sucesso.", "success");
+            cadastrarTrilhaCurso(idTrilhaAtual, idCurso, ordem);
+            window.showAppAlert("Curso adicionado a trilha com sucesso.", "success");
             renderizarCursosDaTrilha();
             configurarModalInsercaoTrilhaCurso();
             if (modalTrilhaCurso) {
@@ -366,9 +375,6 @@ if (
         renderizarCursosDaTrilha();
     }
 }
-
-
-
 
 
 
