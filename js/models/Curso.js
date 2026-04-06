@@ -71,6 +71,18 @@ function atualizarTotalAulasCurso(idCurso, totalAulas) {
     return curso;
 }
 
+function atualizarTotaisCurso(idCurso, totalAulas, totalHoras) {
+    const curso = cursos.find((item) => Number(item.id) === Number(idCurso));
+    if (!curso) {
+        return null;
+    }
+
+    curso.totalAulas = Number(totalAulas) || 0;
+    curso.totalHoras = Number(totalHoras) || 0;
+    salvarListaNoStorage(CHAVE_STORAGE_CURSOS, cursos);
+    return curso;
+}
+
 function atualizarCurso(id, titulo, descricao, nivel, idCategoria, idInstrutor, dataPublicacao) {
     const curso = cursos.find((item) => Number(item.id) === Number(id));
     if (!curso) {
@@ -105,6 +117,7 @@ export {
     cadastrarCurso,
     listarCursos,
     atualizarTotalAulasCurso,
+    atualizarTotaisCurso,
     atualizarCurso,
     excluirCurso
 };

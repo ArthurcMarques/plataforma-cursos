@@ -3,7 +3,7 @@ import { cadastrarAvaliacao, excluirAvaliacao, listarAvaliacoes } from "./models
 import { cadastrarAssinatura, excluirAssinatura, listarAssinaturas } from "./models/Assinatura.js";
 import { atualizarCategoria, cadastrarCategoria, excluirCategoria, listarCategorias } from "./models/Categoria.js";
 import { cadastrarCertificado, excluirCertificado, listarCertificados } from "./models/Certificado.js";
-import { atualizarCurso, atualizarTotalAulasCurso, cadastrarCurso, excluirCurso, listarCursos } from "./models/Curso.js";
+import { atualizarCurso, atualizarTotaisCurso, cadastrarCurso, excluirCurso, listarCursos } from "./models/Curso.js";
 import { cadastrarMatricula, excluirMatricula, listarMatriculas } from "./models/Matricula.js";
 import { cadastrarModulo, listarModulos } from "./models/Modulo.js";
 import { cadastrarPagamento, excluirPagamento, listarPagamentos } from "./models/Pagamento.js";
@@ -546,10 +546,11 @@ if (
         return instrutor ? instrutor.nomeCompleto : "-";
     }
 
-    function contarAulasDoCurso(idCurso) {
+    function calcularResumoCurso(idCurso) {
         const modulos = listarModulos();
         const aulas = listarAulas();
         let totalAulas = 0;
+        let totalMinutos = 0;
 
         modulos.forEach((modulo) => {
             if (Number(modulo.idCurso) !== Number(idCurso)) {
@@ -559,11 +560,13 @@ if (
             aulas.forEach((aula) => {
                 if (Number(aula.idModulo) === Number(modulo.id)) {
                     totalAulas += 1;
+                    totalMinutos += Number(aula.duracaoMinutos) || 0;
                 }
             });
         });
 
-        return totalAulas;
+        const totalHoras = Number((totalMinutos / 60).toFixed(1));
+        return { totalAulas, totalHoras };
     }
 
     function renderizarCursos() {
@@ -580,7 +583,7 @@ if (
         if (cursos.length === 0) {
             const linhaVazia = document.createElement("tr");
             const colunaVazia = document.createElement("td");
-            colunaVazia.colSpan = 6;
+            colunaVazia.colSpan = 7;
             colunaVazia.className = "text-center text-muted";
             colunaVazia.textContent = "Nenhum curso cadastrado.";
             linhaVazia.appendChild(colunaVazia);
@@ -603,13 +606,22 @@ if (
             const colunaNivel = document.createElement("td");
             colunaNivel.textContent = curso.nivel;
 
-            const totalAulasCalculado = contarAulasDoCurso(curso.id);
-            if ((Number(curso.totalAulas) || 0) !== totalAulasCalculado) {
-                atualizarTotalAulasCurso(curso.id, totalAulasCalculado);
+            const resumoCurso = calcularResumoCurso(curso.id);
+            const totalAulasCalculado = resumoCurso.totalAulas;
+            const totalHorasCalculado = resumoCurso.totalHoras;
+
+            if (
+                (Number(curso.totalAulas) || 0) !== totalAulasCalculado ||
+                (Number(curso.totalHoras) || 0) !== totalHorasCalculado
+            ) {
+                atualizarTotaisCurso(curso.id, totalAulasCalculado, totalHorasCalculado);
             }
 
             const colunaTotalAulas = document.createElement("td");
             colunaTotalAulas.textContent = totalAulasCalculado;
+
+            const colunaTotalHoras = document.createElement("td");
+            colunaTotalHoras.textContent = `${totalHorasCalculado} h`;
 
             const colunaAcoes = document.createElement("td");
             colunaAcoes.className = "text-center";
@@ -674,6 +686,7 @@ if (
             linha.appendChild(colunaInstrutor);
             linha.appendChild(colunaNivel);
             linha.appendChild(colunaTotalAulas);
+            linha.appendChild(colunaTotalHoras);
             linha.appendChild(colunaAcoes);
             tabelaCursosBody.appendChild(linha);
         });
@@ -1010,16 +1023,19 @@ if (
 
             const aulas = listarAulas();
             let totalAulas = 0;
+            let totalMinutos = 0;
 
             modulosDoCurso.forEach((modulo) => {
                 aulas.forEach((aula) => {
                     if (Number(aula.idModulo) === Number(modulo.id)) {
                         totalAulas += 1;
+                        totalMinutos += Number(aula.duracaoMinutos) || 0;
                     }
                 });
             });
 
-            atualizarTotalAulasCurso(idCursoRelacionado, totalAulas);
+            const totalHoras = Number((totalMinutos / 60).toFixed(1));
+            atualizarTotaisCurso(idCursoRelacionado, totalAulas, totalHoras);
         }
 
         function renderizarAulasModulo() {
