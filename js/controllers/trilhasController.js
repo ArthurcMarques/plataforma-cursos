@@ -101,7 +101,7 @@ if (
             const colunaAcoes = document.createElement("td");
             colunaAcoes.className = "text-center";
             const dropdown = document.createElement("div");
-            dropdown.className = "dropdown";
+            dropdown.className = "dropup";
 
             const botaoAcoes = document.createElement("button");
             botaoAcoes.type = "button";
