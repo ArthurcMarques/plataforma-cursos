@@ -412,6 +412,7 @@ const categoriaCursoSelect = document.getElementById("categoria-curso");
 const instrutorCursoSelect = document.getElementById("instrutor-curso");
 const dataPublicacaoCursoInput = document.getElementById("data-publicacao-curso");
 const tabelaCursosBody = document.getElementById("tabela-cursos");
+const filtroCategoriaCursosSelect = document.getElementById("filtro-categoria-cursos");
 const botaoInserirCurso = document.getElementById("btn-inserir-curso");
 const modalCursoElement = document.getElementById("modal-curso");
 const tituloModalCurso = document.getElementById("titulo-modal-curso");
@@ -426,6 +427,7 @@ if (
     instrutorCursoSelect &&
     dataPublicacaoCursoInput &&
     tabelaCursosBody &&
+    filtroCategoriaCursosSelect &&
     botaoInserirCurso &&
     modalCursoElement &&
     tituloModalCurso &&
@@ -500,6 +502,23 @@ if (
         });
     }
 
+    function preencherSelectFiltroCategorias() {
+        filtroCategoriaCursosSelect.innerHTML = "";
+
+        const opcaoTodas = document.createElement("option");
+        opcaoTodas.value = "";
+        opcaoTodas.textContent = "Todas as categorias";
+        filtroCategoriaCursosSelect.appendChild(opcaoTodas);
+
+        const categorias = listarCategorias();
+        categorias.forEach((categoria) => {
+            const opcao = document.createElement("option");
+            opcao.value = categoria.id;
+            opcao.textContent = categoria.nome;
+            filtroCategoriaCursosSelect.appendChild(opcao);
+        });
+    }
+
     function preencherSelectInstrutores() {
         instrutorCursoSelect.innerHTML = "";
 
@@ -548,7 +567,14 @@ if (
     }
 
     function renderizarCursos() {
-        const cursos = listarCursos();
+        const idCategoriaFiltro = Number(filtroCategoriaCursosSelect.value);
+        const cursos = listarCursos().filter((curso) => {
+            if (!idCategoriaFiltro) {
+                return true;
+            }
+
+            return Number(curso.idCategoria) === idCategoriaFiltro;
+        });
         tabelaCursosBody.innerHTML = "";
 
         if (cursos.length === 0) {
@@ -714,9 +740,11 @@ if (
 
     botaoInserirCurso.addEventListener("click", abrirModalInsercaoCurso);
     modalCursoElement.addEventListener("hidden.bs.modal", configurarModalInsercaoCurso);
+    filtroCategoriaCursosSelect.addEventListener("change", renderizarCursos);
 
     resetarFormularioCurso();
     preencherSelectCategorias();
+    preencherSelectFiltroCategorias();
     preencherSelectInstrutores();
     renderizarCursos();
 }
