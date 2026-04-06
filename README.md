@@ -1,121 +1,104 @@
 # Plataforma de Cursos Online
 
-Projeto academico da disciplina de Tecnologias de Construcao de Software.
+Projeto acadêmico da disciplina de Tecnologias de Construção de Software.
 
-Referencia do enunciado:
+Documentação base do professor:
 - `docs/LAB - Plataforma de Cursos.pdf`
-
-## Objetivo
-
-Construir uma plataforma web simples para cadastro e consulta de dados de cursos online, com paginas separadas por entidade.
+- `docs/LAB03_Plataforma_de_Cursos.md`
 
 ## Tecnologias
 
 - HTML5
 - Bootstrap 5
 - JavaScript puro (ES Modules)
-- `localStorage` do navegador (persistencia simples, sem backend)
+- `localStorage` para persistência simples no navegador
 
-## Estrutura do projeto
+## Estrutura principal
 
 ```text
 plataforma-cursos/
   index.html
   pages/
     categorias.html
-    usuarios.html
     cursos.html
-    matriculas.html
+    usuarios.html
     modulos.html
     aulas.html
+    matriculas.html
+    progresso-aulas.html
+    avaliacoes.html
+    trilhas.html
+    trilha-cursos.html
+    certificados.html
+    planos.html
+    assinaturas.html
     pagamentos.html
   js/
     main.js
     models/
-      Categoria.js
-      Usuario.js
-      Curso.js
-      Matricula.js
-    storage/
-      localStorage.js
+    storage/localStorage.js
 ```
 
-## O que ja esta implementado
+## Funcionalidades implementadas
 
-- Home (`index.html`) com:
-  - secao de apresentacao
-  - navbar simples
-  - cards de acessos rapidos
+### Módulo Acadêmico e de Conteúdo
+- Categorias: cadastro, listagem, edição e exclusão.
+- Cursos: cadastro, listagem, edição e exclusão.
+- Filtro de cursos por categoria.
+- Módulos por curso: cadastro e listagem por `idCurso`.
+- Aulas por módulo: cadastro e listagem por `idModulo`.
+- Trilhas: cadastro e listagem.
+- Trilha x Cursos: vínculo e listagem.
 
-- Pagina de categorias:
-  - cadastro
-  - listagem em tabela
-  - validacao basica
-  - persistencia em `localStorage`
+### Módulo de Usuário e Progresso
+- Usuários: cadastro, listagem, edição e exclusão.
+- Matrículas: cadastro e listagem.
+- Progresso de aulas: registro e listagem.
+- Avaliações: registro e listagem.
+- Certificados: geração visual, validação simples por progresso e listagem.
 
-- Pagina de usuarios:
-  - cadastro
-  - listagem em tabela
-  - validacao basica (incluindo formato de e-mail)
-  - e-mail salvo em minusculas
-  - matricula gerada automaticamente (ID)
-  - data de cadastro com valor padrao atual
-  - persistencia em `localStorage`
+### Módulo Financeiro
+- Planos: cadastro e listagem.
+- Assinaturas: cadastro e listagem.
+- Pagamentos: cadastro e listagem.
+- Checkout simples em pagamentos:
+  - seleção de usuário para filtrar assinaturas
+  - valor sugerido automaticamente pelo plano da assinatura.
 
-- Pagina de cursos:
-  - cadastro
-  - listagem em tabela
-  - relacionamento com categorias e usuarios (instrutor)
-  - selects preenchidos com dados cadastrados
-  - data de publicacao com valor padrao atual
-  - persistencia em `localStorage`
+## Regras e validações já aplicadas
 
-- Pagina de matriculas:
-  - cadastro
-  - listagem em tabela
-  - relacionamento com usuarios e cursos
-  - validacao de campos
-  - bloqueio simples de matricula duplicada (mesmo usuario no mesmo curso)
-  - persistencia em `localStorage`
+- IDs gerados automaticamente.
+- Validação de campos obrigatórios em formulários.
+- Validação simples de e-mail.
+- Bloqueios simples de duplicidade em entidades chave.
+- Relacionamentos por ID entre entidades (usuário, curso, módulo, aula, plano, assinatura).
+- Atualização de `totalAulas` e `totalHoras` em cursos com base nas aulas cadastradas.
 
-## Persistencia compartilhada (padrao do projeto)
+## Padrão de interface
 
-Foi criado um utilitario simples em `js/storage/localStorage.js` com duas funcoes:
-
-- `carregarListaDoStorage(chave)`
-- `salvarListaNoStorage(chave, lista)`
-
-Cada modelo segue o mesmo padrao:
-1. carrega lista do `localStorage` quando o modulo abre;
-2. mantem os dados em array em memoria;
-3. salva novamente no `localStorage` ao cadastrar.
-
-Chaves usadas atualmente:
-- `categorias`
-- `usuarios`
-- `cursos`
-- `matriculas`
-
-Esse mesmo padrao pode ser reutilizado nas proximas entidades (`modulos`, `aulas`, `pagamentos`, etc.).
+- Navbar padronizada nas páginas.
+- Listagens como área principal.
+- Formulários em modal com botão `Inserir`.
+- Coluna `Ações` com dropdown.
 
 ## Como executar
 
-1. Abra o arquivo `index.html` no navegador.
-2. Navegue pelas paginas.
-3. Cadastre dados nas telas.
+1. Abra o `index.html` no navegador.
+2. Navegue entre as telas pelo menu.
+3. Cadastre dados de exemplo.
 
-## Fluxo recomendado para testar
+## Persistência de dados
 
-1. Cadastrar categorias
-2. Cadastrar usuarios
-3. Cadastrar cursos (relacionando categoria + instrutor)
-4. Cadastrar matriculas (relacionando usuario + curso)
+Os dados ficam salvos no `localStorage` do navegador.
 
-## Observacoes
+Para limpar:
 
-- Projeto sem backend.
-- Projeto sem bibliotecas externas de JavaScript.
-- Dados ficam apenas no navegador atual (`localStorage`).
+```js
+localStorage.clear()
+```
 
-Para limpar os dados salvos:
-- Abra o DevTools do navegador e execute `localStorage.clear()` no Console.
+## Observações
+
+- Não usa backend.
+- Não usa bibliotecas JavaScript externas além do Bootstrap.
+- Projeto focado em implementação simples e didática.
