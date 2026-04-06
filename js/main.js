@@ -178,6 +178,7 @@ const formUsuario = document.getElementById("form-usuario");
 const nomeUsuarioInput = document.getElementById("nome-usuario");
 const emailUsuarioInput = document.getElementById("email-usuario");
 const senhaUsuarioInput = document.getElementById("senha-usuario");
+const tipoUsuarioSelect = document.getElementById("tipo-usuario");
 const dataCadastroUsuarioInput = document.getElementById("data-cadastro-usuario");
 const tabelaUsuariosBody = document.getElementById("tabela-usuarios");
 const botaoInserirUsuario = document.getElementById("btn-inserir-usuario");
@@ -190,6 +191,7 @@ if (
     nomeUsuarioInput &&
     emailUsuarioInput &&
     senhaUsuarioInput &&
+    tipoUsuarioSelect &&
     dataCadastroUsuarioInput &&
     tabelaUsuariosBody &&
     botaoInserirUsuario &&
@@ -219,6 +221,7 @@ if (
     function configurarModalInsercaoUsuario() {
         idUsuarioEmEdicao = null;
         formUsuario.reset();
+        tipoUsuarioSelect.value = "Aluno";
         definirDataAtualPadrao();
         tituloModalUsuario.textContent = "Novo Usuario";
         botaoSalvarUsuario.textContent = "Salvar";
@@ -238,6 +241,7 @@ if (
         nomeUsuarioInput.value = usuario.nomeCompleto;
         emailUsuarioInput.value = usuario.email;
         senhaUsuarioInput.value = usuario.senha;
+        tipoUsuarioSelect.value = usuario.tipoUsuario || "Aluno";
         dataCadastroUsuarioInput.value = usuario.dataCadastro;
         tituloModalUsuario.textContent = "Editar Usuario";
         botaoSalvarUsuario.textContent = "Salvar alteracoes";
@@ -254,7 +258,7 @@ if (
         if (usuarios.length === 0) {
             const linhaVazia = document.createElement("tr");
             const colunaVazia = document.createElement("td");
-            colunaVazia.colSpan = 5;
+            colunaVazia.colSpan = 6;
             colunaVazia.className = "text-center text-muted";
             colunaVazia.textContent = "Nenhum usuario cadastrado.";
             linhaVazia.appendChild(colunaVazia);
@@ -273,6 +277,9 @@ if (
 
             const colunaEmail = document.createElement("td");
             colunaEmail.textContent = usuario.email;
+
+            const colunaTipo = document.createElement("td");
+            colunaTipo.textContent = usuario.tipoUsuario || "Aluno";
 
             const colunaData = document.createElement("td");
             colunaData.textContent = usuario.dataCadastro;
@@ -330,6 +337,7 @@ if (
             linha.appendChild(colunaId);
             linha.appendChild(colunaNome);
             linha.appendChild(colunaEmail);
+            linha.appendChild(colunaTipo);
             linha.appendChild(colunaData);
             linha.appendChild(colunaAcoes);
             tabelaUsuariosBody.appendChild(linha);
@@ -342,6 +350,7 @@ if (
         const nomeCompleto = nomeUsuarioInput.value.trim();
         const email = emailUsuarioInput.value.trim().toLowerCase();
         const senha = senhaUsuarioInput.value.trim();
+        const tipoUsuario = tipoUsuarioSelect.value;
         const dataCadastro = dataCadastroUsuarioInput.value;
 
         if (nomeCompleto === "") {
@@ -368,6 +377,12 @@ if (
             return;
         }
 
+        if (tipoUsuario !== "Aluno" && tipoUsuario !== "Instrutor") {
+            alert("Selecione o tipo de usuario.");
+            tipoUsuarioSelect.focus();
+            return;
+        }
+
         if (dataCadastro === "") {
             alert("Informe a data de cadastro.");
             dataCadastroUsuarioInput.focus();
@@ -385,9 +400,9 @@ if (
         }
 
         if (idUsuarioEmEdicao === null) {
-            cadastrarUsuario(nomeCompleto, email, senha, dataCadastro);
+            cadastrarUsuario(nomeCompleto, email, senha, dataCadastro, tipoUsuario);
         } else {
-            atualizarUsuario(idUsuarioEmEdicao, nomeCompleto, email, senha, dataCadastro);
+            atualizarUsuario(idUsuarioEmEdicao, nomeCompleto, email, senha, dataCadastro, tipoUsuario);
         }
 
         renderizarUsuarios();
@@ -527,7 +542,9 @@ if (
         opcaoPadrao.textContent = "Selecione um instrutor";
         instrutorCursoSelect.appendChild(opcaoPadrao);
 
-        const usuarios = listarUsuarios();
+        const usuarios = listarUsuarios().filter((usuario) => {
+            return (usuario.tipoUsuario || "Aluno") === "Instrutor";
+        });
         usuarios.forEach((usuario) => {
             const opcao = document.createElement("option");
             opcao.value = usuario.id;

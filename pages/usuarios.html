@@ -91,13 +91,14 @@
                                 <th>Matrícula</th>
                                 <th>Nome</th>
                                 <th>E-mail</th>
+                                <th>Tipo</th>
                                 <th>Data de cadastro</th>
                                 <th>Ações</th>
                             </tr>
                         </thead>
                         <tbody id="tabela-usuarios">
                             <tr>
-                                <td colspan="5" class="text-center text-muted">Nenhum usuário cadastrado.</td>
+                                <td colspan="6" class="text-center text-muted">Nenhum usuário cadastrado.</td>
                             </tr>
                         </tbody>
                     </table>
@@ -128,6 +129,14 @@
                             <div class="mb-3">
                                 <label for="senha-usuario" class="form-label">Senha</label>
                                 <input type="password" class="form-control" id="senha-usuario" name="senha">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="tipo-usuario" class="form-label">Tipo de usuário</label>
+                                <select class="form-select" id="tipo-usuario" name="tipoUsuario">
+                                    <option value="Aluno">Aluno</option>
+                                    <option value="Instrutor">Instrutor</option>
+                                </select>
                             </div>
 
                             <div class="mb-0">
