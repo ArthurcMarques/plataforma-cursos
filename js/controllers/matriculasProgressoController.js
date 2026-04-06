@@ -36,7 +36,7 @@ if (
     const modalMatricula = window.bootstrap ? new window.bootstrap.Modal(modalMatriculaElement) : null;
 
     function configurarModalInsercaoMatricula() {
-        formMatricula.reset();
+        formMatricula.reset();`r`n        window.aplicarDataPadraoHoje(formMatricula);
         tituloModalMatricula.textContent = "Nova Matricula";
         botaoSalvarMatricula.textContent = "Salvar";
     }
@@ -242,7 +242,7 @@ if (
     const modalProgresso = window.bootstrap ? new window.bootstrap.Modal(modalProgressoElement) : null;
 
     function configurarModalInsercaoProgresso() {
-        formProgresso.reset();
+        formProgresso.reset();`r`n        window.aplicarDataPadraoHoje(formProgresso);
         tituloModalProgresso.textContent = "Registrar Progresso";
         botaoSalvarProgresso.textContent = "Salvar";
     }
@@ -468,7 +468,7 @@ if (
     }
 
     function configurarModalInsercaoAvaliacao() {
-        formAvaliacao.reset();
+        formAvaliacao.reset();`r`n        window.aplicarDataPadraoHoje(formAvaliacao);
         dataAvaliacaoInput.value = dataAtualFormatoInputAvaliacao();
         tituloModalAvaliacao.textContent = "Nova Avaliacao";
         botaoSalvarAvaliacao.textContent = "Salvar";
@@ -707,7 +707,7 @@ if (
     }
 
     function configurarModalInsercaoCertificado() {
-        formCertificado.reset();
+        formCertificado.reset();`r`n        window.aplicarDataPadraoHoje(formCertificado);
         dataEmissaoInput.value = dataAtualFormatoInputCertificado();
         codigoVerificacaoInput.value = gerarProximoCodigoCertificado();
         tituloModalCertificado.textContent = "Gerar Certificado";
@@ -972,6 +972,7 @@ if (
     renderizarCertificados();
     configurarModalInsercaoCertificado();
 }
+
 
 
 

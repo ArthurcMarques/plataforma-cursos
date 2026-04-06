@@ -40,7 +40,7 @@ if (
     const idCursoAtual = Number(parametrosUrl.get("idCurso"));
 
     function configurarModalInsercaoModulo() {
-        formModulo.reset();
+        formModulo.reset();`r`n        window.aplicarDataPadraoHoje(formModulo);
         tituloModalModulo.textContent = "Novo Modulo";
         botaoSalvarModulo.textContent = "Salvar";
     }
@@ -215,7 +215,7 @@ if (
     const idModuloAtual = Number(parametrosUrl.get("idModulo"));
 
     function configurarModalInsercaoAula() {
-        formAula.reset();
+        formAula.reset();`r`n        window.aplicarDataPadraoHoje(formAula);
         tituloModalAula.textContent = "Nova Aula";
         botaoSalvarAula.textContent = "Salvar";
     }
@@ -438,6 +438,7 @@ if (
         renderizarAulasModulo();
     }
 }
+
 
 
 

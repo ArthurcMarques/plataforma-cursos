@@ -60,7 +60,7 @@ if (
 
     function configurarModalInsercaoCurso() {
         idCursoEmEdicao = null;
-        formCurso.reset();
+        formCurso.reset();`r`n        window.aplicarDataPadraoHoje(formCurso);
         definirDataPublicacaoPadrao();
         tituloModalCurso.textContent = "Novo Curso";
         botaoSalvarCurso.textContent = "Salvar";
@@ -373,5 +373,6 @@ if (
     preencherSelectInstrutores();
     renderizarCursos();
 }
+
 
 

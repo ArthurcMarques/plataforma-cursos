@@ -40,7 +40,7 @@ if (
         idCategoriaEmEdicao = null;
         tituloModalCategoria.textContent = "Nova Categoria";
         botaoSalvarCategoria.textContent = "Salvar";
-        formCategoria.reset();
+        formCategoria.reset();`r`n        window.aplicarDataPadraoHoje(formCategoria);
     }
 
     function abrirModalInsercao() {
@@ -174,6 +174,7 @@ if (
 
     renderizarCategorias();
 }
+
 
 
 

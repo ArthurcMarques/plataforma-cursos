@@ -60,7 +60,7 @@ if (
 
     function configurarModalInsercaoUsuario() {
         idUsuarioEmEdicao = null;
-        formUsuario.reset();
+        formUsuario.reset();`r`n        window.aplicarDataPadraoHoje(formUsuario);
         tipoUsuarioSelect.value = "Aluno";
         definirDataAtualPadrao();
         tituloModalUsuario.textContent = "Novo Usuario";
@@ -258,6 +258,7 @@ if (
     resetarFormularioUsuario();
     renderizarUsuarios();
 }
+
 
 
 

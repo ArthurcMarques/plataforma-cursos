@@ -38,7 +38,7 @@ if (
     const modalTrilha = window.bootstrap ? new window.bootstrap.Modal(modalTrilhaElement) : null;
 
     function configurarModalInsercaoTrilha() {
-        formTrilha.reset();
+        formTrilha.reset();`r`n        window.aplicarDataPadraoHoje(formTrilha);
         tituloModalTrilha.textContent = "Nova Trilha";
         botaoSalvarTrilha.textContent = "Salvar";
     }
@@ -193,7 +193,7 @@ if (
     const idTrilhaAtual = Number(parametrosUrl.get("idTrilha"));
 
     function configurarModalInsercaoTrilhaCurso() {
-        formTrilhaCursos.reset();
+        formTrilhaCursos.reset();`r`n        window.aplicarDataPadraoHoje(formTrilhaCursos);
         tituloModalTrilhaCurso.textContent = "Adicionar Curso";
         botaoSalvarTrilhaCurso.textContent = "Salvar";
     }
@@ -366,6 +366,7 @@ if (
         renderizarCursosDaTrilha();
     }
 }
+
 
 
 

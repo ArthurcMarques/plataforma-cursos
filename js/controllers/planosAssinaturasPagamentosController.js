@@ -40,7 +40,7 @@ if (
     const modalPlano = window.bootstrap ? new window.bootstrap.Modal(modalPlanoElement) : null;
 
     function configurarModalInsercaoPlano() {
-        formPlano.reset();
+        formPlano.reset();`r`n        window.aplicarDataPadraoHoje(formPlano);
         tituloModalPlano.textContent = "Novo Plano";
         botaoSalvarPlano.textContent = "Salvar";
     }
@@ -216,7 +216,7 @@ if (
     const modalAssinatura = window.bootstrap ? new window.bootstrap.Modal(modalAssinaturaElement) : null;
 
     function configurarModalInsercaoAssinatura() {
-        formAssinatura.reset();
+        formAssinatura.reset();`r`n        window.aplicarDataPadraoHoje(formAssinatura);
         tituloModalAssinatura.textContent = "Nova Assinatura";
         botaoSalvarAssinatura.textContent = "Salvar";
     }
@@ -489,7 +489,7 @@ if (
     const modalPagamento = window.bootstrap ? new window.bootstrap.Modal(modalPagamentoElement) : null;
 
     function configurarModalInsercaoPagamento() {
-        formPagamento.reset();
+        formPagamento.reset();`r`n        window.aplicarDataPadraoHoje(formPagamento);
         tituloModalPagamento.textContent = "Novo Pagamento";
         botaoSalvarPagamento.textContent = "Salvar";
     }
@@ -759,6 +759,7 @@ if (
     preencherValorPagoAutomatico();
     renderizarPagamentos();
 }
+
 
 
 
