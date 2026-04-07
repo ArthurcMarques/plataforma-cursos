@@ -1,4 +1,4 @@
-import { carregarListaDoStorage, salvarListaNoStorage } from "../storage/localStorage.js";
+﻿import { carregarListaDoStorage, salvarListaNoStorage } from "../storage/localStorage.js";
 
 class Plano {
     constructor(id, nome, descricao, preco, duracaoMeses) {
@@ -48,3 +48,4 @@ function excluirPlano(id) {
 }
 
 export { Plano, planos, gerarIdPlano, cadastrarPlano, listarPlanos, excluirPlano };
+

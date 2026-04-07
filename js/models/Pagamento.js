@@ -1,4 +1,4 @@
-import { carregarListaDoStorage, salvarListaNoStorage } from "../storage/localStorage.js";
+﻿import { carregarListaDoStorage, salvarListaNoStorage } from "../storage/localStorage.js";
 
 class Pagamento {
     constructor(id, idAssinatura, valorPago, dataPagamento, metodoPagamento, idTransacaoGateway) {
@@ -64,3 +64,4 @@ function excluirPagamento(id) {
 }
 
 export { Pagamento, pagamentos, gerarIdPagamento, cadastrarPagamento, listarPagamentos, excluirPagamento };
+

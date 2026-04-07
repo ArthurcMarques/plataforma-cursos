@@ -1,4 +1,4 @@
-import { carregarListaDoStorage, salvarListaNoStorage } from "../storage/localStorage.js";
+﻿import { carregarListaDoStorage, salvarListaNoStorage } from "../storage/localStorage.js";
 
 class ProgressoAula {
     constructor(idUsuario, idAula, status, dataConclusao) {
@@ -41,3 +41,4 @@ function excluirProgressoAula(idUsuario, idAula) {
 }
 
 export { ProgressoAula, progressoAulas, cadastrarProgressoAula, listarProgressoAulas, excluirProgressoAula };
+

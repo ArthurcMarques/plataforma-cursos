@@ -1,4 +1,4 @@
-import { carregarListaDoStorage, salvarListaNoStorage } from "../storage/localStorage.js";
+﻿import { carregarListaDoStorage, salvarListaNoStorage } from "../storage/localStorage.js";
 
 class Curso {
     constructor(id, titulo, descricao, nivel, idCategoria, idInstrutor, dataPublicacao, totalAulas = 0, totalHoras = 0) {
@@ -121,3 +121,4 @@ export {
     atualizarCurso,
     excluirCurso
 };
+

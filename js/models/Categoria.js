@@ -1,4 +1,4 @@
-import { carregarListaDoStorage, salvarListaNoStorage } from "../storage/localStorage.js";
+﻿import { carregarListaDoStorage, salvarListaNoStorage } from "../storage/localStorage.js";
 
 class Categoria {
     constructor(id, nome, descricao) {
@@ -66,3 +66,4 @@ export {
     atualizarCategoria,
     excluirCategoria
 };
+

@@ -1,4 +1,4 @@
-import { carregarListaDoStorage, salvarListaNoStorage } from "../storage/localStorage.js";
+﻿import { carregarListaDoStorage, salvarListaNoStorage } from "../storage/localStorage.js";
 
 class Avaliacao {
     constructor(id, idUsuario, idCurso, nota, comentario, dataAvaliacao) {
@@ -64,3 +64,4 @@ export {
     listarAvaliacoes,
     excluirAvaliacao
 };
+

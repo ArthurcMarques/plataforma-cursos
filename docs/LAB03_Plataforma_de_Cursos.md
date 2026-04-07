@@ -1,4 +1,4 @@
-# LAB03 - Plataforma de Cursos Online
+﻿# LAB03 - Plataforma de Cursos Online
 
 ## 1. Objetivo
 Desenvolver a interface funcional de uma Plataforma de Cursos Online, aplicando conceitos de:
@@ -249,3 +249,5 @@ A aplicação deve utilizar obrigatoriamente:
 - DataPagamento (not null)  
 - MetodoPagamento (not null)  
 - Id_Transacao_Gateway (not null)  
+
+

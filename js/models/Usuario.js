@@ -1,4 +1,4 @@
-import { carregarListaDoStorage, salvarListaNoStorage } from "../storage/localStorage.js";
+﻿import { carregarListaDoStorage, salvarListaNoStorage } from "../storage/localStorage.js";
 
 class Usuario {
     constructor(id, nomeCompleto, email, senha, dataCadastro, tipoUsuario = "Aluno") {
@@ -87,4 +87,5 @@ export {
     atualizarUsuario,
     excluirUsuario
 };
+
 

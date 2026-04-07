@@ -1,4 +1,4 @@
-# Plataforma de Cursos Online
+﻿# Plataforma de Cursos Online
 
 Projeto acadêmico da disciplina de Tecnologias de Construção de Software.
 
@@ -102,3 +102,5 @@ localStorage.clear()
 - Não usa backend.
 - Não usa bibliotecas JavaScript externas além do Bootstrap.
 - Projeto focado em implementação simples e didática.
+
+

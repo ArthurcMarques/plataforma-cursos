@@ -1,4 +1,4 @@
-import { carregarListaDoStorage, salvarListaNoStorage } from "../storage/localStorage.js";
+﻿import { carregarListaDoStorage, salvarListaNoStorage } from "../storage/localStorage.js";
 
 class Trilha {
     constructor(id, titulo, descricao, idCategoria) {
@@ -31,3 +31,4 @@ function listarTrilhas() {
 }
 
 export { Trilha, trilhas, gerarIdTrilha, cadastrarTrilha, listarTrilhas };
+

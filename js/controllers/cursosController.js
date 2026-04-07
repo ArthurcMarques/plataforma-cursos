@@ -60,7 +60,8 @@ if (
 
     function configurarModalInsercaoCurso() {
         idCursoEmEdicao = null;
-        formCurso.reset();`r`n        window.aplicarDataPadraoHoje(formCurso);
+        formCurso.reset();
+        window.aplicarDataPadraoHoje(formCurso);
         definirDataPublicacaoPadrao();
         tituloModalCurso.textContent = "Novo Curso";
         botaoSalvarCurso.textContent = "Salvar";
@@ -351,7 +352,8 @@ if (
         }
 
         if (idCursoEmEdicao === null) {
-            cadastrarCurso(titulo, descricao, nivel, idCategoria, idInstrutor, dataPublicacao);`r`n            window.showAppAlert("Curso cadastrado com sucesso.", "success");
+            cadastrarCurso(titulo, descricao, nivel, idCategoria, idInstrutor, dataPublicacao);
+        window.showAppAlert("Curso cadastrado com sucesso.", "success");
         } else {
             atualizarCurso(idCursoEmEdicao, titulo, descricao, nivel, idCategoria, idInstrutor, dataPublicacao);
         }
@@ -373,6 +375,8 @@ if (
     preencherSelectInstrutores();
     renderizarCursos();
 }
+
+
 
 
 

@@ -40,7 +40,8 @@ if (
     const modalPlano = window.bootstrap ? new window.bootstrap.Modal(modalPlanoElement) : null;
 
     function configurarModalInsercaoPlano() {
-        formPlano.reset();`r`n        window.aplicarDataPadraoHoje(formPlano);
+        formPlano.reset();
+        window.aplicarDataPadraoHoje(formPlano);
         tituloModalPlano.textContent = "Novo Plano";
         botaoSalvarPlano.textContent = "Salvar";
     }
@@ -175,7 +176,8 @@ if (
             return;
         }
 
-        cadastrarPlano(nome, descricao, preco, duracaoMeses);`r`n        window.showAppAlert("Plano cadastrado com sucesso.", "success");
+        cadastrarPlano(nome, descricao, preco, duracaoMeses);
+        window.showAppAlert("Plano cadastrado com sucesso.", "success");
         renderizarPlanos();
         configurarModalInsercaoPlano();
         if (modalPlano) {
@@ -216,7 +218,8 @@ if (
     const modalAssinatura = window.bootstrap ? new window.bootstrap.Modal(modalAssinaturaElement) : null;
 
     function configurarModalInsercaoAssinatura() {
-        formAssinatura.reset();`r`n        window.aplicarDataPadraoHoje(formAssinatura);
+        formAssinatura.reset();
+        window.aplicarDataPadraoHoje(formAssinatura);
         tituloModalAssinatura.textContent = "Nova Assinatura";
         botaoSalvarAssinatura.textContent = "Salvar";
     }
@@ -439,7 +442,8 @@ if (
             return;
         }
 
-        cadastrarAssinatura(idUsuario, idPlano, dataInicio, dataFim);`r`n        window.showAppAlert("Assinatura registrada com sucesso.", "success");
+        cadastrarAssinatura(idUsuario, idPlano, dataInicio, dataFim);
+        window.showAppAlert("Assinatura registrada com sucesso.", "success");
         renderizarAssinaturas();
         configurarModalInsercaoAssinatura();
         if (modalAssinatura) {
@@ -489,7 +493,8 @@ if (
     const modalPagamento = window.bootstrap ? new window.bootstrap.Modal(modalPagamentoElement) : null;
 
     function configurarModalInsercaoPagamento() {
-        formPagamento.reset();`r`n        window.aplicarDataPadraoHoje(formPagamento);
+        formPagamento.reset();
+        window.aplicarDataPadraoHoje(formPagamento);
         tituloModalPagamento.textContent = "Novo Pagamento";
         botaoSalvarPagamento.textContent = "Salvar";
     }
@@ -551,7 +556,7 @@ if (
 
         const opcaoTodos = document.createElement("option");
         opcaoTodos.value = "";
-        opcaoTodos.textContent = "Todos os usuÃ¡rios";
+        opcaoTodos.textContent = "Todos os usuários";
         usuarioCheckoutPagamentoSelect.appendChild(opcaoTodos);
 
         const usuarios = listarUsuarios();
@@ -736,7 +741,8 @@ if (
             return;
         }
 
-        cadastrarPagamento(idAssinatura, valorPago, dataPagamento, metodoPagamento, idTransacaoGateway);`r`n        window.showAppAlert("Pagamento registrado com sucesso.", "success");
+        cadastrarPagamento(idAssinatura, valorPago, dataPagamento, metodoPagamento, idTransacaoGateway);
+        window.showAppAlert("Pagamento registrado com sucesso.", "success");
         renderizarPagamentos();
         configurarModalInsercaoPagamento();
         if (modalPagamento) {
@@ -759,6 +765,8 @@ if (
     preencherValorPagoAutomatico();
     renderizarPagamentos();
 }
+
+
 
 
 

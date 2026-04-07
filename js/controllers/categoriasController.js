@@ -40,7 +40,8 @@ if (
         idCategoriaEmEdicao = null;
         tituloModalCategoria.textContent = "Nova Categoria";
         botaoSalvarCategoria.textContent = "Salvar";
-        formCategoria.reset();`r`n        window.aplicarDataPadraoHoje(formCategoria);
+        formCategoria.reset();
+        window.aplicarDataPadraoHoje(formCategoria);
     }
 
     function abrirModalInsercao() {
@@ -157,7 +158,8 @@ if (
         }
 
         if (idCategoriaEmEdicao === null) {
-            cadastrarCategoria(nome, descricao);`r`n            window.showAppAlert("Categoria cadastrada com sucesso.", "success");
+            cadastrarCategoria(nome, descricao);
+        window.showAppAlert("Categoria cadastrada com sucesso.", "success");
         } else {
             atualizarCategoria(idCategoriaEmEdicao, nome, descricao);
         }
@@ -174,6 +176,8 @@ if (
 
     renderizarCategorias();
 }
+
+
 
 
 

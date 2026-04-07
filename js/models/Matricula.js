@@ -1,4 +1,4 @@
-import { carregarListaDoStorage, salvarListaNoStorage } from "../storage/localStorage.js";
+﻿import { carregarListaDoStorage, salvarListaNoStorage } from "../storage/localStorage.js";
 
 class Matricula {
     constructor(id, idUsuario, idCurso, dataMatricula, dataConclusao = null) {
@@ -48,3 +48,4 @@ function excluirMatricula(id) {
 }
 
 export { Matricula, matriculas, gerarIdMatricula, cadastrarMatricula, listarMatriculas, excluirMatricula };
+

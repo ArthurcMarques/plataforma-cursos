@@ -1,4 +1,4 @@
-import { carregarListaDoStorage, salvarListaNoStorage } from "../storage/localStorage.js";
+﻿import { carregarListaDoStorage, salvarListaNoStorage } from "../storage/localStorage.js";
 
 class Modulo {
     constructor(id, idCurso, titulo, ordem) {
@@ -31,3 +31,4 @@ function listarModulos() {
 }
 
 export { Modulo, modulos, gerarIdModulo, cadastrarModulo, listarModulos };
+

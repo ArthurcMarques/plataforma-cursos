@@ -36,7 +36,8 @@ if (
     const modalMatricula = window.bootstrap ? new window.bootstrap.Modal(modalMatriculaElement) : null;
 
     function configurarModalInsercaoMatricula() {
-        formMatricula.reset();`r`n        window.aplicarDataPadraoHoje(formMatricula);
+        formMatricula.reset();
+        window.aplicarDataPadraoHoje(formMatricula);
         tituloModalMatricula.textContent = "Nova Matricula";
         botaoSalvarMatricula.textContent = "Salvar";
     }
@@ -61,7 +62,7 @@ if (
 
         const opcaoPadrao = document.createElement("option");
         opcaoPadrao.value = "";
-        opcaoPadrao.textContent = "Selecione um usuÃ¡rio";
+        opcaoPadrao.textContent = "Selecione um usuário";
         usuarioMatriculaSelect.appendChild(opcaoPadrao);
 
         const usuarios = listarUsuarios();
@@ -109,7 +110,7 @@ if (
             const colunaVazia = document.createElement("td");
             colunaVazia.colSpan = 4;
             colunaVazia.className = "text-center text-muted";
-            colunaVazia.textContent = "Nenhuma matrÃ­cula cadastrada.";
+            colunaVazia.textContent = "Nenhuma matrícula cadastrada.";
             linhaVazia.appendChild(colunaVazia);
             tabelaMatriculasBody.appendChild(linhaVazia);
             return;
@@ -178,7 +179,7 @@ if (
         const idCurso = Number(cursoMatriculaSelect.value);
 
         if (!idUsuario) {
-            alert("Selecione o usuÃ¡rio.");
+            alert("Selecione o usuário.");
             usuarioMatriculaSelect.focus();
             return;
         }
@@ -194,12 +195,13 @@ if (
         });
 
         if (matriculaDuplicada) {
-            alert("Esse usuÃ¡rio jÃ¡ estÃ¡ matriculado nesse curso.");
+            alert("Esse usuário já está matriculado nesse curso.");
             usuarioMatriculaSelect.focus();
             return;
         }
 
-        cadastrarMatricula(idUsuario, idCurso, dataAtualMatricula());`r`n        window.showAppAlert("Matricula cadastrada com sucesso.", "success");
+        cadastrarMatricula(idUsuario, idCurso, dataAtualMatricula());
+        window.showAppAlert("Matricula cadastrada com sucesso.", "success");
         renderizarMatriculas();
         configurarModalInsercaoMatricula();
         if (modalMatricula) {
@@ -242,7 +244,8 @@ if (
     const modalProgresso = window.bootstrap ? new window.bootstrap.Modal(modalProgressoElement) : null;
 
     function configurarModalInsercaoProgresso() {
-        formProgresso.reset();`r`n        window.aplicarDataPadraoHoje(formProgresso);
+        formProgresso.reset();
+        window.aplicarDataPadraoHoje(formProgresso);
         tituloModalProgresso.textContent = "Registrar Progresso";
         botaoSalvarProgresso.textContent = "Salvar";
     }
@@ -415,7 +418,8 @@ if (
             return;
         }
 
-        cadastrarProgressoAula(idUsuario, idAula, status, dataConclusao);`r`n        window.showAppAlert("Progresso registrado com sucesso.", "success");
+        cadastrarProgressoAula(idUsuario, idAula, status, dataConclusao);
+        window.showAppAlert("Progresso registrado com sucesso.", "success");
         renderizarProgressoAulas();
         configurarModalInsercaoProgresso();
         if (modalProgresso) {
@@ -468,7 +472,8 @@ if (
     }
 
     function configurarModalInsercaoAvaliacao() {
-        formAvaliacao.reset();`r`n        window.aplicarDataPadraoHoje(formAvaliacao);
+        formAvaliacao.reset();
+        window.aplicarDataPadraoHoje(formAvaliacao);
         dataAvaliacaoInput.value = dataAtualFormatoInputAvaliacao();
         tituloModalAvaliacao.textContent = "Nova Avaliacao";
         botaoSalvarAvaliacao.textContent = "Salvar";
@@ -637,7 +642,8 @@ if (
             return;
         }
 
-        cadastrarAvaliacao(idUsuario, idCurso, nota, comentario, dataAvaliacao);`r`n        window.showAppAlert("Avaliacao cadastrada com sucesso.", "success");
+        cadastrarAvaliacao(idUsuario, idCurso, nota, comentario, dataAvaliacao);
+        window.showAppAlert("Avaliacao cadastrada com sucesso.", "success");
         renderizarAvaliacoes();
         configurarModalInsercaoAvaliacao();
         if (modalAvaliacao) {
@@ -707,7 +713,8 @@ if (
     }
 
     function configurarModalInsercaoCertificado() {
-        formCertificado.reset();`r`n        window.aplicarDataPadraoHoje(formCertificado);
+        formCertificado.reset();
+        window.aplicarDataPadraoHoje(formCertificado);
         dataEmissaoInput.value = dataAtualFormatoInputCertificado();
         codigoVerificacaoInput.value = gerarProximoCodigoCertificado();
         tituloModalCertificado.textContent = "Gerar Certificado";
@@ -953,7 +960,8 @@ if (
             return;
         }
 
-        const novoCertificado = cadastrarCertificado(idUsuario, idCurso, dataEmissao);`r`n        window.showAppAlert("Certificado gerado com sucesso.", "success");
+        const novoCertificado = cadastrarCertificado(idUsuario, idCurso, dataEmissao);
+        window.showAppAlert("Certificado gerado com sucesso.", "success");
         atualizarVisualCertificado(novoCertificado);
         renderizarCertificados();
         configurarModalInsercaoCertificado();
@@ -972,6 +980,8 @@ if (
     renderizarCertificados();
     configurarModalInsercaoCertificado();
 }
+
+
 
 
 

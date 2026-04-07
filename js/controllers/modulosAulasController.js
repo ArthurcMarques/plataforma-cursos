@@ -40,7 +40,8 @@ if (
     const idCursoAtual = Number(parametrosUrl.get("idCurso"));
 
     function configurarModalInsercaoModulo() {
-        formModulo.reset();`r`n        window.aplicarDataPadraoHoje(formModulo);
+        formModulo.reset();
+        window.aplicarDataPadraoHoje(formModulo);
         tituloModalModulo.textContent = "Novo Modulo";
         botaoSalvarModulo.textContent = "Salvar";
     }
@@ -165,7 +166,8 @@ if (
                 return;
             }
 
-            cadastrarModulo(idCursoAtual, titulo, ordem);`r`n            window.showAppAlert("Modulo cadastrado com sucesso.", "success");
+            cadastrarModulo(idCursoAtual, titulo, ordem);
+        window.showAppAlert("Modulo cadastrado com sucesso.", "success");
             renderizarModulosCurso();
             configurarModalInsercaoModulo();
             if (modalModulo) {
@@ -215,7 +217,8 @@ if (
     const idModuloAtual = Number(parametrosUrl.get("idModulo"));
 
     function configurarModalInsercaoAula() {
-        formAula.reset();`r`n        window.aplicarDataPadraoHoje(formAula);
+        formAula.reset();
+        window.aplicarDataPadraoHoje(formAula);
         tituloModalAula.textContent = "Nova Aula";
         botaoSalvarAula.textContent = "Salvar";
     }
@@ -422,7 +425,8 @@ if (
                 return;
             }
 
-            cadastrarAula(idModuloAtual, titulo, tipoConteudo, urlConteudo, duracaoMinutos, ordem);`r`n            window.showAppAlert("Aula cadastrada com sucesso.", "success");
+            cadastrarAula(idModuloAtual, titulo, tipoConteudo, urlConteudo, duracaoMinutos, ordem);
+        window.showAppAlert("Aula cadastrada com sucesso.", "success");
             atualizarTotalAulasDoCursoAtual();
             renderizarAulasModulo();
             configurarModalInsercaoAula();
@@ -438,6 +442,8 @@ if (
         renderizarAulasModulo();
     }
 }
+
+
 
 
 

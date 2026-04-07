@@ -60,7 +60,8 @@ if (
 
     function configurarModalInsercaoUsuario() {
         idUsuarioEmEdicao = null;
-        formUsuario.reset();`r`n        window.aplicarDataPadraoHoje(formUsuario);
+        formUsuario.reset();
+        window.aplicarDataPadraoHoje(formUsuario);
         tipoUsuarioSelect.value = "Aluno";
         definirDataAtualPadrao();
         tituloModalUsuario.textContent = "Novo Usuario";
@@ -240,7 +241,8 @@ if (
         }
 
         if (idUsuarioEmEdicao === null) {
-            cadastrarUsuario(nomeCompleto, email, senha, dataCadastro, tipoUsuario);`r`n            window.showAppAlert("Usuario cadastrado com sucesso.", "success");
+            cadastrarUsuario(nomeCompleto, email, senha, dataCadastro, tipoUsuario);
+        window.showAppAlert("Usuario cadastrado com sucesso.", "success");
         } else {
             atualizarUsuario(idUsuarioEmEdicao, nomeCompleto, email, senha, dataCadastro, tipoUsuario);
         }
@@ -258,6 +260,8 @@ if (
     resetarFormularioUsuario();
     renderizarUsuarios();
 }
+
+
 
 
 

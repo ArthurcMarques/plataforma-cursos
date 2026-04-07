@@ -1,4 +1,4 @@
-import { carregarListaDoStorage, salvarListaNoStorage } from "../storage/localStorage.js";
+﻿import { carregarListaDoStorage, salvarListaNoStorage } from "../storage/localStorage.js";
 
 class Assinatura {
     constructor(id, idUsuario, idPlano, dataInicio, dataFim) {
@@ -48,3 +48,4 @@ function excluirAssinatura(id) {
 }
 
 export { Assinatura, assinaturas, gerarIdAssinatura, cadastrarAssinatura, listarAssinaturas, excluirAssinatura };
+

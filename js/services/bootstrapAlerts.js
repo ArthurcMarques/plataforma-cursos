@@ -39,3 +39,4 @@ window.showAppAlert = mostrarAlertaBootstrap;
 window.alert = (mensagem) => {
     mostrarAlertaBootstrap(String(mensagem), "danger");
 };
+

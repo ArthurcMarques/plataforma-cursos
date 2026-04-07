@@ -1,4 +1,4 @@
-import { carregarListaDoStorage, salvarListaNoStorage } from "../storage/localStorage.js";
+﻿import { carregarListaDoStorage, salvarListaNoStorage } from "../storage/localStorage.js";
 
 class Certificado {
     constructor(id, idUsuario, idCurso, codigoVerificacao, dataEmissao, idTrilha = null) {
@@ -64,3 +64,4 @@ export {
     listarCertificados,
     excluirCertificado
 };
+
