@@ -3,8 +3,8 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="Página de cadastro e listagem de módulos por curso">
-        <title>Módulos do Curso | Plataforma de Cursos</title>
+        <meta name="description" content="Página de cadastro e listagem de avaliações">
+        <title>Avaliações | Plataforma de Cursos</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     </head>
     <body class="bg-light">
@@ -76,35 +76,37 @@
         <main class="container py-5">
             <section class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
                 <div>
-                    <h1 class="mb-1">Módulos do Curso</h1>
-                    <p class="text-muted mb-1">Curso selecionado:</p>
-                    <p class="fw-semibold mb-0" id="nome-curso-selecionado">Nome do curso (placeholder)</p>
+                    <h1 class="mb-1">Avaliações</h1>
+                    <p class="text-muted mb-0">Registre e visualize avaliações de usuários nos cursos.</p>
                 </div>
                 <button
                     type="button"
                     class="btn btn-primary"
-                    id="btn-inserir-modulo"
+                    id="btn-inserir-avaliacao"
                     data-bs-toggle="modal"
-                    data-bs-target="#modal-modulo"
+                    data-bs-target="#modal-avaliacao"
                 >
                     Inserir
                 </button>
             </section>
 
             <section class="bg-white border rounded-3 p-4 mb-4">
-                <h2 class="h5 mb-3">Lista de Módulos</h2>
-                <div class="table-responsive overflow-visible">
+                <h2 class="h5 mb-3">Lista de Avaliações</h2>
+                <div>
                     <table class="table table-striped table-bordered mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th>Título do módulo</th>
-                                <th>Ordem</th>
+                                <th>Usuário</th>
+                                <th>Curso</th>
+                                <th>Nota</th>
+                                <th>Comentário</th>
+                                <th>Data da avaliação</th>
                                 <th>Ações</th>
                             </tr>
                         </thead>
-                        <tbody id="tabela-modulos">
+                        <tbody id="tabela-avaliacoes">
                             <tr>
-                                <td colspan="3" class="text-center text-muted">Nenhum módulo cadastrado.</td>
+                                <td colspan="6" class="text-center text-muted">Nenhuma avaliação cadastrada.</td>
                             </tr>
                         </tbody>
                     </table>
@@ -112,30 +114,56 @@
             </section>
         </main>
 
-        <div class="modal fade" id="modal-modulo" tabindex="-1" aria-labelledby="titulo-modal-modulo" aria-hidden="true">
+        <div class="modal fade" id="modal-avaliacao" tabindex="-1" aria-labelledby="titulo-modal-avaliacao" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h2 class="modal-title fs-5" id="titulo-modal-modulo">Novo Módulo</h2>
+                        <h2 class="modal-title fs-5" id="titulo-modal-avaliacao">Nova Avaliação</h2>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
                     </div>
 
-                    <form id="form-modulo">
+                    <form id="form-avaliacao">
                         <div class="modal-body">
                             <div class="mb-3">
-                                <label for="titulo-modulo" class="form-label">Título do módulo</label>
-                                <input type="text" class="form-control" id="titulo-modulo" name="titulo">
+                                <label for="usuario-avaliacao" class="form-label">Usuário</label>
+                                <select class="form-select" id="usuario-avaliacao" name="usuario">
+                                    <option value="">Selecione um usuário</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="curso-avaliacao" class="form-label">Curso</label>
+                                <select class="form-select" id="curso-avaliacao" name="curso">
+                                    <option value="">Selecione um curso</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="nota-avaliacao" class="form-label">Nota</label>
+                                <select class="form-select" id="nota-avaliacao" name="nota">
+                                    <option value="">Selecione a nota</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="comentario-avaliacao" class="form-label">Comentário</label>
+                                <textarea class="form-control" id="comentario-avaliacao" name="comentario" rows="3"></textarea>
                             </div>
 
                             <div class="mb-0">
-                                <label for="ordem-modulo" class="form-label">Ordem</label>
-                                <input type="number" class="form-control" id="ordem-modulo" name="ordem" min="1">
+                                <label for="data-avaliacao" class="form-label">Data da avaliação</label>
+                                <input type="date" class="form-control" id="data-avaliacao" name="dataAvaliacao">
                             </div>
                         </div>
 
                         <div class="modal-footer">
                             <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
-                            <button type="submit" class="btn btn-primary" id="btn-salvar-modulo">Salvar</button>
+                            <button type="submit" class="btn btn-primary" id="btn-salvar-avaliacao">Salvar</button>
                         </div>
                     </form>
                 </div>

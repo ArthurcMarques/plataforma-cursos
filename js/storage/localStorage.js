@@ -1,4 +1,4 @@
-function carregarListaDoStorage(chave) {
+﻿function carregarListaDoStorage(chave) {
     if (typeof localStorage === "undefined") {
         return [];
     }
@@ -25,3 +25,4 @@ function salvarListaNoStorage(chave, lista) {
 }
 
 export { carregarListaDoStorage, salvarListaNoStorage };
+
